@@ -1,13 +1,16 @@
-﻿using System.Data.Common;
-using System.Data.Entity;
-using Abp.DynamicEntityProperties;
+﻿using Abp.DynamicEntityProperties;
 using Abp.Zero.EntityFramework;
 using AbpFramework.OTel.Authorization.Roles;
 using AbpFramework.OTel.Authorization.Users;
 using AbpFramework.OTel.MultiTenancy;
+using MySql.Data.EntityFramework;
+using MySql.Data.MySqlClient;
+using System.Data.Common;
+using System.Data.Entity;
 
 namespace AbpFramework.OTel.EntityFramework
 {
+    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class OTelDbContext : AbpZeroDbContext<Tenant, Role, User>
     {
         //TODO: Define an IDbSet for your Entities...

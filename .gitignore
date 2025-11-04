@@ -197,3 +197,4 @@ FakesAssemblies/
 
 # Custom 
 /src/.idea/
+/AbpFramework/AbpFramework.OTel.WebMpa/App_Data

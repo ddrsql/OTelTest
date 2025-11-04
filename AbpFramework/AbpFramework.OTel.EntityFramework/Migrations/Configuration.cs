@@ -1,8 +1,9 @@
-﻿using System.Data.Entity.Migrations;
-using Abp.MultiTenancy;
+﻿using Abp.MultiTenancy;
 using Abp.Zero.EntityFramework;
 using AbpFramework.OTel.Migrations.SeedData;
 using EntityFramework.DynamicFilters;
+using MySql.Data.EntityFramework;
+using System.Data.Entity.Migrations;
 
 namespace AbpFramework.OTel.Migrations
 {
@@ -14,6 +15,8 @@ namespace AbpFramework.OTel.Migrations
         {
             AutomaticMigrationsEnabled = false;
             ContextKey = "OTel";
+            
+            //SetSqlGenerator("MySql.Data.MySqlClient", new MySqlMigrationSqlGenerator());
         }
 
         protected override void Seed(OTel.EntityFramework.OTelDbContext context)

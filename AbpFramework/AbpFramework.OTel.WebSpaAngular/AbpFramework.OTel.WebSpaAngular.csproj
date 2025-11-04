@@ -16,7 +16,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AbpFramework.OTel.WebSpaAngular</RootNamespace>
     <AssemblyName>AbpFramework.OTel.WebSpaAngular</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -3788,19 +3788,19 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbpFramework.OTel.Application\AbpFramework.OTel.Application.csproj">
-      <Project>{edf5d964-4c0f-4f19-b674-58a38a5e5401}</Project>
+      <Project>{5287A9B5-532F-4261-943D-845E25B73C05}</Project>
       <Name>AbpFramework.OTel.Application</Name>
     </ProjectReference>
     <ProjectReference Include="..\AbpFramework.OTel.Core\AbpFramework.OTel.Core.csproj">
-      <Project>{17298ea0-af73-4f30-b6f1-2066100d7d74}</Project>
+      <Project>{8F327652-89E4-4481-A58A-8B3F0AAA6FFF}</Project>
       <Name>AbpFramework.OTel.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\AbpFramework.OTel.EntityFramework\AbpFramework.OTel.EntityFramework.csproj">
-      <Project>{3979f157-deb0-4878-ab1d-4cef6b5a1300}</Project>
+      <Project>{62D84178-1DC3-4FE3-BED3-B2D7BDF9A8D7}</Project>
       <Name>AbpFramework.OTel.EntityFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\AbpFramework.OTel.WebApi\AbpFramework.OTel.WebApi.csproj">
-      <Project>{5eb52d3d-09fd-463a-b02a-8d9856bd3724}</Project>
+      <Project>{EA5D6C5A-180B-4B03-A642-D13AC0E6FB99}</Project>
       <Name>AbpFramework.OTel.WebApi</Name>
     </ProjectReference>
   </ItemGroup>
