@@ -1,0 +1,20 @@
+﻿[
+  {
+    "outputFileName": "css/style.min.css",
+    "inputFiles": [
+      "css/style.css"
+    ]
+  },
+  {
+    "outputFileName": "lib/famfamfam-flags/dist/sprite/famfamfam-flags.min.css",
+    "inputFiles": [
+      "lib/famfamfam-flags/dist/sprite/famfamfam-flags.css"
+    ]
+  },
+  {
+    "outputFileName": "lib/font-awesome/css/font-awesome.min.css",
+    "inputFiles": [
+      "lib/font-awesome/css/font-awesome.css"
+    ]
+  }
+]

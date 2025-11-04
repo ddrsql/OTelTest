@@ -1,0 +1,4 @@
+﻿{
+    "source": "./docs",
+    "ignore": ["_pages/**/*"]
+}
