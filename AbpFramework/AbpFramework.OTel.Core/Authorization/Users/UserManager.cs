@@ -11,7 +11,7 @@ using AbpFramework.OTel.Authorization.Roles;
 
 namespace AbpFramework.OTel.Authorization.Users
 {
-    public class UserManager : AbpUserManager<Role, User>
+    public class UserManager : AbpUserManager<Role, User>, IOTelActivityEnabled
     {
         public UserManager(
             UserStore userStore,

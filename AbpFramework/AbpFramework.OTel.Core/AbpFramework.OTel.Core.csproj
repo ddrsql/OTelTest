@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{17298EA0-AF73-4F30-B6F1-2066100D7D74}</ProjectGuid>
+    <ProjectGuid>{28FA5331-B70A-443F-9A0F-87D03D23E744}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AbpFramework.OTel</RootNamespace>
@@ -296,6 +296,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Localization\Source\OTel-vi.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AbpFramework.OTel\AbpFramework.OTel.csproj">
+      <Project>{f91f9d58-98d4-be3f-87f4-708811772a8e}</Project>
+      <Name>AbpFramework.OTel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

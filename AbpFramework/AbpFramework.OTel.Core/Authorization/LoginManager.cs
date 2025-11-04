@@ -13,7 +13,7 @@ using AbpFramework.OTel.MultiTenancy;
 
 namespace AbpFramework.OTel.Authorization
 {
-    public class LogInManager : AbpLogInManager<Tenant, Role, User>
+    public class LogInManager : AbpLogInManager<Tenant, Role, User>, IOTelActivityEnabled
     {
         public LogInManager(
             UserManager userManager,

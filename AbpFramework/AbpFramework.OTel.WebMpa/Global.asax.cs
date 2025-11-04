@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading;
-using Abp.Castle.Logging.Log4Net;
+﻿using Abp.Castle.Logging.Log4Net;
 using Abp.Web;
 using Abp.WebApi.Validation;
 using Castle.Facilities.Logging;
+using System;
+using System.IO;
+using System.Threading;
 
 namespace AbpFramework.OTel.WebMpa
 {
@@ -11,6 +12,12 @@ namespace AbpFramework.OTel.WebMpa
     {
         protected override void Application_Start(object sender, EventArgs e)
         {
+            // 创建日志文件路径
+            string logPath = Server.MapPath("~/App_Data/otel_console.log");
+            // 重定向控制台输出到文件
+            FileStream fileStream = new FileStream(logPath, FileMode.Append, FileAccess.Write);
+            StreamWriter writer = new StreamWriter(fileStream) { AutoFlush = true };
+            Console.SetOut(writer);
 #if DEBUG
             AbpBootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(
                 f => f.UseAbpLog4Net().WithConfig(Server.MapPath("log4net.config"))

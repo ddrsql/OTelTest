@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5EB52D3D-09FD-463A-B02A-8D9856BD3724}</ProjectGuid>
+    <ProjectGuid>{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AbpFramework.OTel</RootNamespace>

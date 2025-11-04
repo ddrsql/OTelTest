@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EDF5D964-4C0F-4F19-B674-58A38A5E5401}</ProjectGuid>
+    <ProjectGuid>{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AbpFramework.OTel</RootNamespace>
@@ -294,6 +294,10 @@
     <ProjectReference Include="..\AbpFramework.OTel.Core\AbpFramework.OTel.Core.csproj">
       <Project>{8F327652-89E4-4481-A58A-8B3F0AAA6FFF}</Project>
       <Name>AbpFramework.OTel.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AbpFramework.OTel\AbpFramework.OTel.csproj">
+      <Project>{f91f9d58-98d4-be3f-87f4-708811772a8e}</Project>
+      <Name>AbpFramework.OTel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

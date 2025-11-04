@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DFA48E27-7D53-4955-A722-3D91A7119BE7}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,15 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DFA48E
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.Core", "AbpFramework.OTel.Core\AbpFramework.OTel.Core.csproj", "{17298EA0-AF73-4F30-B6F1-2066100D7D74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.Core", "AbpFramework.OTel.Core\AbpFramework.OTel.Core.csproj", "{28FA5331-B70A-443F-9A0F-87D03D23E744}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.Application", "AbpFramework.OTel.Application\AbpFramework.OTel.Application.csproj", "{EDF5D964-4C0F-4F19-B674-58A38A5E5401}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.Application", "AbpFramework.OTel.Application\AbpFramework.OTel.Application.csproj", "{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.EntityFramework", "AbpFramework.OTel.EntityFramework\AbpFramework.OTel.EntityFramework.csproj", "{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.EntityFramework", "AbpFramework.OTel.EntityFramework\AbpFramework.OTel.EntityFramework.csproj", "{3B22DA99-7A58-4CE4-A97A-FCEB21573B28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.WebSpaAngular", "AbpFramework.OTel.WebSpaAngular\AbpFramework.OTel.WebSpaAngular.csproj", "{897F6FD8-6F90-48E4-95A5-B4429B896205}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.WebSpaAngular", "AbpFramework.OTel.WebSpaAngular\AbpFramework.OTel.WebSpaAngular.csproj", "{BED81F22-E8CD-41B4-BCD4-061800299886}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.WebApi", "AbpFramework.OTel.WebApi\AbpFramework.OTel.WebApi.csproj", "{5EB52D3D-09FD-463A-B02A-8D9856BD3724}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.WebApi", "AbpFramework.OTel.WebApi\AbpFramework.OTel.WebApi.csproj", "{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel.WebMpa", "AbpFramework.OTel.WebMpa\AbpFramework.OTel.WebMpa.csproj", "{404A6D3B-AA85-4E4C-AEEE-1E5026D5F135}"
 EndProject
@@ -35,32 +35,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbpFramework.OTel", "AbpFramework.OTel\AbpFramework.OTel.csproj", "{F91F9D58-98D4-BE3F-87F4-708811772A8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{17298EA0-AF73-4F30-B6F1-2066100D7D74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17298EA0-AF73-4F30-B6F1-2066100D7D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17298EA0-AF73-4F30-B6F1-2066100D7D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17298EA0-AF73-4F30-B6F1-2066100D7D74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDF5D964-4C0F-4F19-B674-58A38A5E5401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDF5D964-4C0F-4F19-B674-58A38A5E5401}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDF5D964-4C0F-4F19-B674-58A38A5E5401}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDF5D964-4C0F-4F19-B674-58A38A5E5401}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3979F157-DEB0-4878-AB1D-4CEF6B5A1300}.Release|Any CPU.Build.0 = Release|Any CPU
-		{897F6FD8-6F90-48E4-95A5-B4429B896205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{897F6FD8-6F90-48E4-95A5-B4429B896205}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{897F6FD8-6F90-48E4-95A5-B4429B896205}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{897F6FD8-6F90-48E4-95A5-B4429B896205}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5EB52D3D-09FD-463A-B02A-8D9856BD3724}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EB52D3D-09FD-463A-B02A-8D9856BD3724}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5EB52D3D-09FD-463A-B02A-8D9856BD3724}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5EB52D3D-09FD-463A-B02A-8D9856BD3724}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28FA5331-B70A-443F-9A0F-87D03D23E744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28FA5331-B70A-443F-9A0F-87D03D23E744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28FA5331-B70A-443F-9A0F-87D03D23E744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28FA5331-B70A-443F-9A0F-87D03D23E744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23EACC36-14C3-4AFC-BA44-464C52C4EFF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B22DA99-7A58-4CE4-A97A-FCEB21573B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B22DA99-7A58-4CE4-A97A-FCEB21573B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B22DA99-7A58-4CE4-A97A-FCEB21573B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B22DA99-7A58-4CE4-A97A-FCEB21573B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BED81F22-E8CD-41B4-BCD4-061800299886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BED81F22-E8CD-41B4-BCD4-061800299886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BED81F22-E8CD-41B4-BCD4-061800299886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BED81F22-E8CD-41B4-BCD4-061800299886}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B7CF5E1-9FAF-43D5-9E6C-6A7BC63E3A96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{404A6D3B-AA85-4E4C-AEEE-1E5026D5F135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{404A6D3B-AA85-4E4C-AEEE-1E5026D5F135}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{404A6D3B-AA85-4E4C-AEEE-1E5026D5F135}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,6 +75,10 @@ Global
 		{6F98C2F2-898A-421B-BE3D-68FE69EC0646}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F98C2F2-898A-421B-BE3D-68FE69EC0646}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F98C2F2-898A-421B-BE3D-68FE69EC0646}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F91F9D58-98D4-BE3F-87F4-708811772A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F91F9D58-98D4-BE3F-87F4-708811772A8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F91F9D58-98D4-BE3F-87F4-708811772A8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F91F9D58-98D4-BE3F-87F4-708811772A8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Configuration;
-﻿using Abp.Owin;
+using Abp.Owin;
 using AbpFramework.OTel.Api.Controllers;
 using AbpFramework.OTel.WebMpa;
 using Microsoft.AspNet.Identity;
