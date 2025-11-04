@@ -125,6 +125,7 @@ namespace AbpFramework.OTel.WebMpa.Controllers
             switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
+                    Logger.Info($"{usernameOrEmailAddress}登录成功");
                     return loginResult;
                 default:
                     throw CreateExceptionForFailedLoginAttempt(loginResult.Result, usernameOrEmailAddress, tenancyName);

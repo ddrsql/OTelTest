@@ -22,19 +22,9 @@ namespace AbpFramework.OTel
         {
             _logger = logger;
         }
-        public void Intercept(IInvocation invocation)
+
+        private static MethodInfo GetMethodInfo(IInvocation invocation)
         {
-            _logger.Error($"方法调用前：{invocation.Method?.DeclaringType?.Name}.{invocation.Method?.Name}");
-
-            // 判断是否启用
-            var oTelEnabled = ConfigurationManager.AppSettings["OTel_Enabled"] ?? "false";
-            bool.TryParse(oTelEnabled, out bool oTelEnabledBool);
-            if (!oTelEnabledBool)
-            {
-                invocation.Proceed();
-                return;
-            }
-
             MethodInfo method;
             try
             {
@@ -45,26 +35,41 @@ namespace AbpFramework.OTel
                 method = invocation.GetConcreteMethod();
             }
 
+            return method;
+        }
+
+        public void Intercept(IInvocation invocation)
+        {
+            var method = GetMethodInfo(invocation);
+
+            // 判断是否启用
+            var oTelEnabled = ConfigurationManager.AppSettings["OTel_Enabled"] ?? "false";
+            bool.TryParse(oTelEnabled, out bool oTelEnabledBool);
+            if (!oTelEnabledBool)
+            {
+                invocation.Proceed();
+                return;
+            }
 
             // 执行过程判断是否需要跟踪
-            //if (!OTelActivityHelper.IsOTelActivityMethod(invocation.Method, out var oTelActivityAttribute))
-            //{
-            //    invocation.Proceed();
-            //    return;
-            //}
+            if (!OTelActivityHelper.IsOTelActivityMethod(method, out var oTelActivityAttribute))
+            {
+                invocation.Proceed();
+                return;
+            }
 
             // https://opentelemetry.io/docs/languages/dotnet/traces/best-practices/
             Activity activity = null;
             try
             {
-                activity = _activitySource.StartActivity(invocation.Method.DeclaringType?.Name + "." + invocation.Method.Name);
+                activity = _activitySource.StartActivity(method.DeclaringType?.Name + "." + method.Name);
                 if (activity != null && activity.IsAllDataRequested == true)
                 {
-                    var oTelMethodParameters = ConfigurationManager.AppSettings["OTel_Method_Parameters"] ?? "false";
+                    var oTelMethodParameters = ConfigurationManager.AppSettings["OTel_RecordMethodParam"] ?? "false";
                     bool.TryParse(oTelMethodParameters, out bool oTelMethodParametersBool);
                     if (oTelMethodParametersBool)
                     {
-                        var parameters = invocation.Method.GetParameters();
+                        var parameters = method.GetParameters();
                         for (int i = 0; i < parameters.Length; i++)
                         {
                             // 参数名
@@ -85,8 +90,6 @@ namespace AbpFramework.OTel
                 activity?.Stop();
                 activity?.Dispose();
             }
-
-            _logger.Error($"方法调用后：{invocation.Method?.DeclaringType?.Name}.{invocation.Method?.Name}");
         }
     }
 }

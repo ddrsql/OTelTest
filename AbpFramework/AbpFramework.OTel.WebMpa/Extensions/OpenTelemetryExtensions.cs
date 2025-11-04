@@ -1,10 +1,12 @@
-﻿using OpenTelemetry;
+﻿using AbpFramework.OTel.Migrations;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Org.BouncyCastle.Bcpg;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -23,27 +25,34 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                     new KeyValuePair<string, object>("deployment.environment", "local")
                 });
 
+            var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
+            var oTelRatioSampler = 1.0;
+            double.TryParse(ConfigurationManager.AppSettings["OTel_RatioSampler"], out oTelRatioSampler);
             var tracerProvider = Sdk.CreateTracerProviderBuilder()
+                .SetSampler(new TraceIdRatioBasedSampler(oTelRatioSampler))  // 设置采样率
+                .SetResourceBuilder(resourceBuilder)
                 .AddSource(OTelModule.AspNetSourceName)
                 .AddAspNetInstrumentation()
                 .AddHttpClientInstrumentation()
-                .SetResourceBuilder(resourceBuilder)
+                //.AddSqlClientInstrumentation()
                 //.AddSource("MyCompany.MyProduct.MyLibrary", "OpenTelemetry.Instrumentation.AspNet.Telemetry")  //设置 OpenTelemetry SDK 时，告诉它要监听哪些 ActivitySource 的事件。
-                .AddConsoleExporter()
                 .AddOtlpExporter(options =>
                 {
-                    options.Endpoint = new Uri("http://localhost:4318/v1/traces");
+                    options.Endpoint = new Uri(otlpEndpoint, "/v1/traces");
                     options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 })
+                .AddConsoleExporter()
                 .Build();
 
             var meterProvider = Sdk.CreateMeterProviderBuilder()
+                .SetResourceBuilder(resourceBuilder)
                 .AddAspNetInstrumentation()
                 .AddHttpClientInstrumentation()
-                .SetResourceBuilder(resourceBuilder)
+                //.AddSqlClientInstrumentation()
                 .AddOtlpExporter(options =>
                 {
-                    options.Endpoint = new Uri("http://localhost:4318/v1/metrics");
+                    options.Endpoint = new Uri(otlpEndpoint, "/v1/metrics");
+                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 })
                 .AddConsoleExporter()
                 .Build();
