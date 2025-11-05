@@ -11,7 +11,13 @@ import cleanCss from "gulp-clean-css";
 import postcss from "gulp-postcss";
 import url from "postcss-url";
 
-const __dirname = import.meta.dirname;
+//https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core
+/*const __dirname = import.meta.dirname;*/
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const bundleConfig = JSON.parse(fs.readFileSync("./bundles.json", "utf-8"));
 
