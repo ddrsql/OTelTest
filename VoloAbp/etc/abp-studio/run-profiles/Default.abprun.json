@@ -1,0 +1,32 @@
+﻿{
+  "applications": {
+    "VoloAbp.OTel.Web": {
+      "type": "dotnet-project",
+      "launchUrl": "https://localhost:44326",
+      "path": "../../../src/VoloAbp.OTel.Web/VoloAbp.OTel.Web.csproj",
+      "kubernetesService": ".*-web$",
+      "healthCheckEndpoint": "/health-status",
+      "healthUiEndpoint": "/health-ui",
+      "execution": {
+        "order": 2
+      }
+    }
+  },
+  "containers": {
+    "serviceName": "OTel-Containers",
+  },
+  "tasks":{
+    "Initialize Solution":{
+    "type": "cli",
+    "runOnSolutionOpen": true,
+    "startCommand": "etc/scripts/initialize-solution.ps1",
+    "workingDirectory": "../../../"
+    },
+    "Migrate Database":{
+    "type": "cli",
+    "runOnSolutionOpen": false,
+    "startCommand": "etc/scripts/migrate-database.ps1",
+    "workingDirectory": "../../../"
+    }
+  }
+}

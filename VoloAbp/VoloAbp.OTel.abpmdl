@@ -1,0 +1,112 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "4.3.6",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.Identity": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.3.6",
+      "isInstalled": true,
+      "creationTime": "11/11/2025 09:44:30 +00:00"
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "VoloAbp.OTel.Application": {
+      "path": "src/VoloAbp.OTel.Application/VoloAbp.OTel.Application.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.Application.Tests": {
+      "path": "test/VoloAbp.OTel.Application.Tests/VoloAbp.OTel.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.Domain.Shared": {
+      "path": "src/VoloAbp.OTel.Domain.Shared/VoloAbp.OTel.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.Application.Contracts": {
+      "path": "src/VoloAbp.OTel.Application.Contracts/VoloAbp.OTel.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.HttpApi": {
+      "path": "src/VoloAbp.OTel.HttpApi/VoloAbp.OTel.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.HttpApi.Client": {
+      "path": "src/VoloAbp.OTel.HttpApi.Client/VoloAbp.OTel.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.Web": {
+      "path": "src/VoloAbp.OTel.Web/VoloAbp.OTel.Web.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.Web.Tests": {
+      "path": "test/VoloAbp.OTel.Web.Tests/VoloAbp.OTel.Web.Tests.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.EntityFrameworkCore.Tests": {
+      "path": "test/VoloAbp.OTel.EntityFrameworkCore.Tests/VoloAbp.OTel.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.EntityFrameworkCore": {
+      "path": "src/VoloAbp.OTel.EntityFrameworkCore/VoloAbp.OTel.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.TestBase": {
+      "path": "test/VoloAbp.OTel.TestBase/VoloAbp.OTel.TestBase.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.Domain.Tests": {
+      "path": "test/VoloAbp.OTel.Domain.Tests/VoloAbp.OTel.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/VoloAbp.OTel.HttpApi.Client.ConsoleTestApp/VoloAbp.OTel.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "VoloAbp.OTel.DbMigrator": {
+      "path": "src/VoloAbp.OTel.DbMigrator/VoloAbp.OTel.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "VoloAbp.OTel.Domain": {
+      "path": "src/VoloAbp.OTel.Domain/VoloAbp.OTel.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}
