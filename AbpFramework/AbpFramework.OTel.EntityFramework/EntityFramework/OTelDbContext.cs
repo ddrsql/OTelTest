@@ -3,6 +3,7 @@ using Abp.Zero.EntityFramework;
 using AbpFramework.OTel.Authorization.Roles;
 using AbpFramework.OTel.Authorization.Users;
 using AbpFramework.OTel.MultiTenancy;
+using AbpFramework.OTel.Tasks;
 using MySql.Data.EntityFramework;
 using MySql.Data.MySqlClient;
 using System.Data.Common;
@@ -14,6 +15,7 @@ namespace AbpFramework.OTel.EntityFramework
     public class OTelDbContext : AbpZeroDbContext<Tenant, Role, User>
     {
         //TODO: Define an IDbSet for your Entities...
+        public DbSet<Task> Tasks { get; set; }
 
         /* NOTE: 
          *   Setting "Default" to base class helps us when working migration commands on Package Manager Console.

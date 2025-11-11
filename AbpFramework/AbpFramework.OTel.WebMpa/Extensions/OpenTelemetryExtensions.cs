@@ -32,9 +32,31 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .SetSampler(new TraceIdRatioBasedSampler(oTelRatioSampler))  // 设置采样率
                 .SetResourceBuilder(resourceBuilder)
                 .AddSource(OTelModule.AspNetSourceName)
-                .AddAspNetInstrumentation()
+                //.AddAspNetInstrumentation()
+                .AddAspNetInstrumentation(options =>
+                {
+                    options.EnrichWithHttpRequest = (activity, rawObject) =>
+                    {
+                        if (rawObject is HttpRequestBase request)
+                        {
+                            activity.DisplayName = $"{request.HttpMethod} {request.Url.AbsolutePath}";
+                            activity.SetTag("http.route", request.Url.AbsolutePath);
+                            activity.SetTag("name", request.Url.AbsolutePath);
+                            activity.SetTag("test", request.Url.AbsolutePath);
+                        }
+                    };
+                    options.EnrichWithHttpResponse = (activity, rawObject) =>
+                    {
+                        if (rawObject is HttpResponseBase response)
+                        {
+                            var httpMethod = activity.GetTagItem("http.request.method");
+                            var urlPath = activity.GetTagItem("url.path");
+                            activity.DisplayName = httpMethod + " " + urlPath;
+                        }
+                    };
+                })
                 .AddHttpClientInstrumentation()
-                //.AddSqlClientInstrumentation()
+                //.AddSqlClientInstrumentation()  // MSSQL
                 //.AddSource("MyCompany.MyProduct.MyLibrary", "OpenTelemetry.Instrumentation.AspNet.Telemetry")  //设置 OpenTelemetry SDK 时，告诉它要监听哪些 ActivitySource 的事件。
                 .AddOtlpExporter(options =>
                 {
@@ -48,7 +70,7 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .SetResourceBuilder(resourceBuilder)
                 .AddAspNetInstrumentation()
                 .AddHttpClientInstrumentation()
-                //.AddSqlClientInstrumentation()
+                //.AddSqlClientInstrumentation()  // MSSQL
                 .AddOtlpExporter(options =>
                 {
                     options.Endpoint = new Uri(otlpEndpoint, "/v1/metrics");
