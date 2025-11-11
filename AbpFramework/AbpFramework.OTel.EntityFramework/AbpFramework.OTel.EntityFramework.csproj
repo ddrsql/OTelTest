@@ -306,6 +306,10 @@
   <ItemGroup>
     <Compile Include="EntityFramework\OTelDbContext.cs" />
     <Compile Include="EntityFramework\Repositories\OTelRepositoryBase.cs" />
+    <Compile Include="Migrations\202511060432564_Add_Task.cs" />
+    <Compile Include="Migrations\202511060432564_Add_Task.Designer.cs">
+      <DependentUpon>202511060432564_Add_Task.cs</DependentUpon>
+    </Compile>
     <Compile Include="OTelDataModule.cs" />
     <Compile Include="Migrations\202510160854436_Init.cs" />
     <Compile Include="Migrations\202510160854436_Init.Designer.cs">
@@ -335,6 +339,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202510160854436_Init.resx">
       <DependentUpon>202510160854436_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202511060432564_Add_Task.resx">
+      <DependentUpon>202511060432564_Add_Task.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,5 @@
 ﻿using Abp.Auditing;
+using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Hangfire;
 using Abp.Hangfire.Configuration;
@@ -67,6 +68,7 @@ namespace AbpFramework.OTel.WebMpa
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Configuration.Modules.AbpWeb().AntiForgery.IsEnabled = false;
         }
     }
 }

@@ -273,6 +273,13 @@
     <Compile Include="Roles\Dto\PermissionDto.cs" />
     <Compile Include="Roles\Dto\RoleDto.cs" />
     <Compile Include="Roles\IRoleAppService.cs" />
+    <Compile Include="Tasks\Dto\CreateTaskInput.cs" />
+    <Compile Include="Tasks\Dto\GetTasksInput.cs" />
+    <Compile Include="Tasks\Dto\GetTasksOutput.cs" />
+    <Compile Include="Tasks\Dto\TaskDto.cs" />
+    <Compile Include="Tasks\Dto\UpdateTaskInput.cs" />
+    <Compile Include="Tasks\ITaskAppService.cs" />
+    <Compile Include="Tasks\TaskAppService.cs" />
     <Compile Include="Users\Dto\CreateUserDto.cs" />
     <Compile Include="Users\Dto\UpdateUserDto.cs" />
     <Compile Include="Users\Dto\UserDto.cs" />
