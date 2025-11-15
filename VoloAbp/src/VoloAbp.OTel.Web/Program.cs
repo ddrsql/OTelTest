@@ -1,10 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using System;
+using System.Threading.Tasks;
 
 namespace VoloAbp.OTel.Web;
 
@@ -23,22 +25,33 @@ public class Program
             var builder = WebApplication.CreateBuilder(args);
             builder.Host
                 .AddAppSettingsSecretsJson()
-                .UseAutofac()
-                .UseSerilog((context, services, loggerConfiguration) =>
-                {
-                    loggerConfiguration
-                    #if DEBUG
-                        .MinimumLevel.Debug()
-                    #else
-                        .MinimumLevel.Information()
-                    #endif
-                        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
-                        .Enrich.FromLogContext()
-                        .WriteTo.Async(c => c.File("Logs/logs.txt"))
-                        .WriteTo.Async(c => c.Console())
-                        .WriteTo.Async(c => c.AbpStudio(services));
-                });
+                .UseAutofac();
+
+                //.UseSerilog((context, services, loggerConfiguration) =>
+                //{
+                //    loggerConfiguration
+                //    #if DEBUG
+                //        .MinimumLevel.Debug()
+                //    #else
+                //        .MinimumLevel.Information()
+                //    #endif
+                //        .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                //        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                //        .Enrich.FromLogContext()
+                //        .WriteTo.Async(c => c.File("Logs/logs.txt"))
+                //        .WriteTo.Async(c => c.Console())
+                //        .WriteTo.Async(c => c.AbpStudio(services));
+                //});
+            //Add support to logging with SERILOG
+            builder.Host.UseSerilog((context, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(context.Configuration);
+            }, writeToProviders: true);
+
+            if (builder.Services.GetConfiguration().GetValue("OTelOptions:Enabled", false))
+            {
+                builder.ConfigureOpenTelemetry();
+            }
             await builder.AddApplicationAsync<OTelWebModule>();
             var app = builder.Build();
             await app.InitializeApplicationAsync();

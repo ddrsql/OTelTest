@@ -9,11 +9,13 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using VoloAbp.OTel.Authors;
+using VoloAbp.OTel.Books;
 
 namespace VoloAbp.OTel.EntityFrameworkCore;
 
@@ -57,6 +59,10 @@ public class OTelDbContext :
 
     #endregion
 
+    public DbSet<Book> Books { get; set; }
+
+    public DbSet<Author> Authors { get; set; }
+
     public OTelDbContext(DbContextOptions<OTelDbContext> options)
         : base(options)
     {
@@ -78,7 +84,7 @@ public class OTelDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureTenantManagement();
         builder.ConfigureBlobStoring();
-        
+
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>
@@ -87,5 +93,29 @@ public class OTelDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Book>(b =>
+        {
+            b.ToTable(OTelConsts.DbTablePrefix + "Books", OTelConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+
+            // ADD THE MAPPING FOR THE RELATION
+            b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
+        });
+
+        builder.Entity<Author>(b =>
+        {
+            b.ToTable(OTelConsts.DbTablePrefix + "Authors",
+                OTelConsts.DbSchema);
+
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(AuthorConsts.MaxNameLength);
+
+            b.HasIndex(x => x.Name);
+        });
     }
 }

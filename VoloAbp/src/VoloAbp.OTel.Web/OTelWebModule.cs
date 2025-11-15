@@ -67,6 +67,7 @@ namespace VoloAbp.OTel.Web;
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule)
 )]
+[DependsOn(typeof(VoloAbpOTelModule))]
 public class OTelWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

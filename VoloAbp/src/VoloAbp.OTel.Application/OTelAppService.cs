@@ -5,7 +5,7 @@ namespace VoloAbp.OTel;
 
 /* Inherit your application services from this class.
  */
-public abstract class OTelAppService : ApplicationService
+public abstract class OTelAppService : ApplicationService, IOTelActivityEnabled
 {
     protected OTelAppService()
     {
