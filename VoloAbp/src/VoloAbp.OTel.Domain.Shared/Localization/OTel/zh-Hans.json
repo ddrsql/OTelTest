@@ -37,6 +37,14 @@
     "Unspecified": "System",
     "SeeAllUsers": "查看所有用户",
     "TakePhoto": "拍摄照片",
-    "ChoosePhoto": "选择照片"
+    "ChoosePhoto": "选择照片",
+    "Menu:BookStore": "书店",
+    "Menu:Books": "图书",
+    "Menu:Authors": "作者",
+    "Permission:BookStore": "书店管理",
+    "Permission:Books": "图书管理",
+    "Actions": "操作",
+    "Name": "姓名",
+    "Type": "类型"
   }
 }

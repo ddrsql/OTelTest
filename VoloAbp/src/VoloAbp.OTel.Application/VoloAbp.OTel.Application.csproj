@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VoloAbp.OTel.Domain\VoloAbp.OTel.Domain.csproj" />
     <ProjectReference Include="..\VoloAbp.OTel.Application.Contracts\VoloAbp.OTel.Application.Contracts.csproj" />
+    <ProjectReference Include="..\VoloAbp.OTel\VoloAbp.OTel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
