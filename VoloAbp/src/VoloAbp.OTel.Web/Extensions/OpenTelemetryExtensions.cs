@@ -86,7 +86,7 @@ public static class OpenTelemetryExtensions
                     options.Endpoint = new Uri(endpoint, "/v1/traces");
                     options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 });
-                tracerBuilder.AddConsoleExporter();
+                //tracerBuilder.AddConsoleExporter();
             })
             .WithMetrics(meterBuilder =>
             {
@@ -99,7 +99,7 @@ public static class OpenTelemetryExtensions
                     options.Endpoint = new Uri(endpoint, "/v1/metrics");
                     options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 });
-                meterBuilder.AddConsoleExporter();
+                //meterBuilder.AddConsoleExporter();
             });
 
         var resource = ResourceBuilder.CreateDefault().Build();

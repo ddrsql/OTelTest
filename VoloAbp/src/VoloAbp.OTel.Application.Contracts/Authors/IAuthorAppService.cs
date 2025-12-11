@@ -16,4 +16,6 @@ public interface IAuthorAppService : IApplicationService
     Task UpdateAsync(Guid id, UpdateAuthorDto input);
 
     Task DeleteAsync(Guid id);
+
+    Task TestLocalizer(int id);
 }
