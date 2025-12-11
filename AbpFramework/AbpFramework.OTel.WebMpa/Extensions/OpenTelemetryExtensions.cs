@@ -1,5 +1,9 @@
 ﻿using AbpFramework.OTel.Migrations;
+using log4net;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -17,9 +21,9 @@ namespace AbpFramework.OTel.WebMpa.Extensions
         public static void AddOpenTelemetry()
         {
             //Environment.SetEnvironmentVariable("OTEL_RESOURCE_ATTRIBUTES", "service.name=AbpFrameworkOTel,service.version=1.0.0,deployment.environment=local");
-
+            var serviceName = ConfigurationManager.AppSettings["OTel_ServiceName"] ?? typeof(OpenTelemetryExtensions).Namespace;
             var resourceBuilder = ResourceBuilder.CreateDefault()
-                .AddService("AbpFrameworkOTel", serviceNamespace: "ddrsql", serviceVersion: "1.0.0")
+                .AddService(serviceName, serviceNamespace: "ddrsql", serviceVersion: "1.0.0")
                 .AddAttributes(new[]
                 {
                     new KeyValuePair<string, object>("deployment.environment", "local")
@@ -32,7 +36,6 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .SetSampler(new TraceIdRatioBasedSampler(oTelRatioSampler))  // 设置采样率
                 .SetResourceBuilder(resourceBuilder)
                 .AddSource(OTelModule.AspNetSourceName)
-                //.AddAspNetInstrumentation()
                 .AddAspNetInstrumentation(options =>
                 {
                     options.EnrichWithHttpRequest = (activity, rawObject) =>
@@ -61,7 +64,7 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .AddOtlpExporter(options =>
                 {
                     options.Endpoint = new Uri(otlpEndpoint, "/v1/traces");
-                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                    options.Protocol = OtlpExportProtocol.HttpProtobuf;
                 })
                 .AddConsoleExporter()
                 .Build();
@@ -74,17 +77,34 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .AddOtlpExporter(options =>
                 {
                     options.Endpoint = new Uri(otlpEndpoint, "/v1/metrics");
-                    options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                    options.Protocol = OtlpExportProtocol.HttpProtobuf;
                 })
                 .AddConsoleExporter()
                 .Build();
 
-            var resource = ResourceBuilder.CreateDefault().Build();
-            var attrStr = string.Empty;
+
+            // create an instance for the logger
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddOpenTelemetry(logging =>
+                {
+                    logging.AddConsoleExporter();
+                    logging.SetResourceBuilder(resourceBuilder)
+                    .AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri(otlpEndpoint, "/v1/logs");
+                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
+                    });
+                    // ... add other options if you'd like
+                });
+            });
+            // this is important, will explain later
+            LogManager.GetRepository().Properties["ILoggerFactory"] = loggerFactory;
+
+            var resource = resourceBuilder.Build();
             foreach (var attribute in resource.Attributes)
             {
-                attrStr += $"{attribute.Key} = {attribute.Value}；";
-                Console.WriteLine("OTEL环境变量：" + attrStr);
+                Console.WriteLine($"OTEL环境变量：{attribute.Key} = {attribute.Value}；");
             }
         }
     }

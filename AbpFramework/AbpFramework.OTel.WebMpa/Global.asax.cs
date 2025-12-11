@@ -18,24 +18,6 @@ namespace AbpFramework.OTel.WebMpa
     {
         protected override void Application_Start(object sender, EventArgs e)
         {
-            var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
-            // create an instance for the logger
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddOpenTelemetry(logging =>
-                {
-                    logging.AddConsoleExporter();
-                    logging.AddOtlpExporter(options =>
-                    {
-                        options.Endpoint = new Uri(otlpEndpoint, "/v1/logs");
-                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    });
-                    // ... add other options if you'd like
-                });
-            });
-            // this is important, will explain later
-            LogManager.GetRepository().Properties["ILoggerFactory"] = loggerFactory;
-
 #if DEBUG
             string folderPath = Server.MapPath("~/App_Data/");
             if (!Directory.Exists(folderPath))
