@@ -45,6 +45,7 @@
     "Permission:Books": "图书管理",
     "Actions": "操作",
     "Name": "姓名",
-    "Type": "类型"
+    "Type": "类型",
+    "NotFound": "未找到 id 为 {0} 的项。"
   }
 }

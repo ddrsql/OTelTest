@@ -1,11 +1,14 @@
+﻿using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VoloAbp.OTel.Permissions;
-using Microsoft.AspNetCore.Authorization;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using VoloAbp.OTel.Permissions;
 
 namespace VoloAbp.OTel.Authors;
 
@@ -26,6 +29,10 @@ public class AuthorAppService : OTelAppService, IAuthorAppService
     public async Task<AuthorDto> GetAsync(Guid id)
     {
         var author = await _authorRepository.GetAsync(id);
+        var enableState = author.GetProperty<bool>("EnableState");
+        var scoring = author.GetProperty<decimal>("Scoring");
+        var remark = author.GetProperty<string>("Remark");
+        var remarkObject = author.GetProperty("Remark");
         return ObjectMapper.Map<Author, AuthorDto>(author);
     }
 
@@ -62,6 +69,10 @@ public class AuthorAppService : OTelAppService, IAuthorAppService
             input.BirthDate,
             input.ShortBio
         );
+        // 使用 SetProperty 方法添加扩展属性
+        author.SetEnableState(false);
+        author.SetScoring(0.15);
+        author.SetRemark("中文测试");
 
         await _authorRepository.InsertAsync(author);
 
@@ -81,6 +92,10 @@ public class AuthorAppService : OTelAppService, IAuthorAppService
         author.BirthDate = input.BirthDate;
         author.ShortBio = input.ShortBio;
 
+        author.SetEnableState(true);
+        author.SetScoring(author.GetScoring() + 0.01);
+        author.SetRemark($"中文测试{DateTime.Now.ToString()}");
+
         await _authorRepository.UpdateAsync(author);
     }
 
@@ -90,4 +105,9 @@ public class AuthorAppService : OTelAppService, IAuthorAppService
         await _authorRepository.DeleteAsync(id);
     }
 
+    public async Task TestLocalizer(int id)
+    {
+        throw new Exception(L["NotFound", id].ToString());
+        //throw new UserFriendlyException(L["NotFound", id].ToString());
+    }
 }
