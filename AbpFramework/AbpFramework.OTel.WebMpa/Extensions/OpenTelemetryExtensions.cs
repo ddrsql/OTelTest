@@ -22,11 +22,12 @@ namespace AbpFramework.OTel.WebMpa.Extensions
         {
             //Environment.SetEnvironmentVariable("OTEL_RESOURCE_ATTRIBUTES", "service.name=AbpFrameworkOTel,service.version=1.0.0,deployment.environment=local");
             var serviceName = ConfigurationManager.AppSettings["OTel_ServiceName"] ?? typeof(OpenTelemetryExtensions).Namespace;
+            var environment = ConfigurationManager.AppSettings["OTel_Environment"];
             var resourceBuilder = ResourceBuilder.CreateDefault()
                 .AddService(serviceName, serviceNamespace: "ddrsql", serviceVersion: "1.0.0")
                 .AddAttributes(new[]
                 {
-                    new KeyValuePair<string, object>("deployment.environment", "local")
+                    new KeyValuePair<string, object>("deployment.environment", environment)
                 });
 
             var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
@@ -81,25 +82,6 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 })
                 .AddConsoleExporter()
                 .Build();
-
-
-            // create an instance for the logger
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddOpenTelemetry(logging =>
-                {
-                    logging.AddConsoleExporter();
-                    logging.SetResourceBuilder(resourceBuilder)
-                    .AddOtlpExporter(options =>
-                    {
-                        options.Endpoint = new Uri(otlpEndpoint, "/v1/logs");
-                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
-                    });
-                    // ... add other options if you'd like
-                });
-            });
-            // this is important, will explain later
-            LogManager.GetRepository().Properties["ILoggerFactory"] = loggerFactory;
 
             var resource = resourceBuilder.Build();
             foreach (var attribute in resource.Attributes)
