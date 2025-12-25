@@ -305,6 +305,7 @@
   <ItemGroup>
     <Compile Include="EntityFramework\OTelDbContext.cs" />
     <Compile Include="EntityFramework\Repositories\OTelRepositoryBase.cs" />
+    <Compile Include="EntityFramework\TaggedTraceidCommandInterceptor.cs" />
     <Compile Include="Migrations\202511060432564_Add_Task.cs" />
     <Compile Include="Migrations\202511060432564_Add_Task.Designer.cs">
       <DependentUpon>202511060432564_Add_Task.cs</DependentUpon>
@@ -333,6 +334,10 @@
     <ProjectReference Include="..\AbpFramework.OTel.Core\AbpFramework.OTel.Core.csproj">
       <Project>{8F327652-89E4-4481-A58A-8B3F0AAA6FFF}</Project>
       <Name>AbpFramework.OTel.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AbpFramework.OTel\AbpFramework.OTel.csproj">
+      <Project>{f91f9d58-98d4-be3f-87f4-708811772a8e}</Project>
+      <Name>AbpFramework.OTel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
