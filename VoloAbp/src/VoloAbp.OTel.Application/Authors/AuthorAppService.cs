@@ -107,7 +107,15 @@ public class AuthorAppService : OTelAppService, IAuthorAppService
 
     public async Task TestLocalizer(int id)
     {
-        throw new Exception(L["NotFound", id].ToString());
-        //throw new UserFriendlyException(L["NotFound", id].ToString());
+        try
+        {
+            await _authorManager.TestLocalizer(id);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        throw new Exception(L["Test.OTel:NotFound", id].ToString());
+        //throw new UserFriendlyException(L["Test.OTel:NotFound", id].ToString());
     }
 }

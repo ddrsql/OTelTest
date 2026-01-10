@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VoloAbp.OTel.EntityFrameworkCore;
 
@@ -10,9 +11,11 @@ using VoloAbp.OTel.EntityFrameworkCore;
 namespace VoloAbp.OTel.Migrations
 {
     [DbContext(typeof(OTelDbContext))]
-    partial class OTelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260102093648_Add_TestSuite")]
+    partial class Add_TestSuite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

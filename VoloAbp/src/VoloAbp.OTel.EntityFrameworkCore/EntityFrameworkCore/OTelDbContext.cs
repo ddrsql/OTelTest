@@ -23,6 +23,8 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using VoloAbp.OTel.Authors;
 using VoloAbp.OTel.Books;
+using VoloAbp.OTel.TestSuites.Aggregates;
+using VoloAbp.OTel.TestSuites.Enums;
 
 namespace VoloAbp.OTel.EntityFrameworkCore;
 
@@ -85,6 +87,8 @@ public class OTelDbContext :
 
     public DbSet<Author> Authors { get; set; }
 
+    public DbSet<TestSuite> TestSuites { get; set; }
+
     public OTelDbContext(DbContextOptions<OTelDbContext> options)
         : base(options)
     {
@@ -93,6 +97,7 @@ public class OTelDbContext :
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Ignore<TestCase>();
         base.OnModelCreating(builder);
 
         /* Include modules to your migration db context */
@@ -140,6 +145,145 @@ public class OTelDbContext :
             b.HasIndex(x => x.Name);
         });
 
+        #region 配置TestSuite聚合
+        builder.Entity<TestSuite>(b =>
+        {
+            b.ToTable("TestSuites");
+            b.HasKey(x => x.Id);
+
+            // 配置 TestConfiguration 值对象
+            b.OwnsOne(x => x.Configuration, config =>
+            {
+                config.ToTable("TestSuiteConfigurations"); // 可选：存储到单独的表
+                config.WithOwner().HasForeignKey("TestSuiteId");
+
+                config.Property(c => c.TimeoutInSeconds)
+                    .HasColumnName("TimeoutInSeconds")
+                    .HasDefaultValue(30);
+
+                config.Property(c => c.MaxRetryCount)
+                    .HasColumnName("MaxRetryCount")
+                    .HasDefaultValue(3);
+
+                config.Property(c => c.EnableParallelExecution)
+                    .HasColumnName("EnableParallelExecution")
+                    .HasDefaultValue(false);
+
+                config.Property(c => c.Environment)
+                    .HasColumnName("Environment")
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Development");
+            });
+
+            // 配置 TestCase 为拥有实体
+            b.OwnsMany(x => x.TestCases, testCase =>
+            {
+                testCase.WithOwner().HasForeignKey("TestSuiteId");
+                testCase.ToTable("TestCases");
+
+                // ✅ 复合主键配置
+                testCase.HasKey("Id", "TestSuiteId");
+
+                // 配置 TestCase 的基本属性
+                testCase.Property(tc => tc.Title)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                testCase.Property(tc => tc.Description)
+                    .HasMaxLength(1000);
+
+                testCase.Property(tc => tc.Steps)
+                    .IsRequired();
+
+                testCase.Property(tc => tc.ExpectedResult)
+                    .IsRequired();
+
+                testCase.Property(tc => tc.ActualResult)
+                    .IsRequired(false);
+
+                testCase.Property(tc => tc.IsEnabled)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                // ✅ 正确配置 TestPriority 值对象
+                testCase.OwnsOne(tc => tc.Priority, priority =>
+                {
+                    // 配置值对象的属性
+                    priority.Property(p => p.Value)
+                        .HasColumnName("PriorityValue")
+                        .HasDefaultValue(2);
+
+                    // 如果 DisplayName 是计算属性，忽略它
+                    priority.Ignore(p => p.DisplayName);
+                });
+
+                testCase.Property(tc => tc.Status)
+                    .IsRequired()
+                    .HasConversion<int>()
+                    .HasDefaultValue(TestCaseStatus.NotRun);
+
+                testCase.Property(tc => tc.LastRunTime)
+                    .IsRequired(false);
+
+                // 配置 TimeSpan? 类型的转换
+                testCase.Property(tc => tc.ExecutionDuration)
+                    .IsRequired(false)
+                    .HasConversion(
+                        v => v.HasValue ? v.Value.Ticks : (long?)null,
+                        v => v.HasValue ? TimeSpan.FromTicks(v.Value) : (TimeSpan?)null)
+                    .HasColumnName("ExecutionDurationTicks");
+
+                testCase.Property(tc => tc.ErrorMessage)
+                    .HasMaxLength(2000)
+                    .IsRequired(false);
+
+                // 索引
+                testCase.HasIndex(tc => tc.Title);
+                testCase.HasIndex(tc => tc.Status);
+                testCase.HasIndex(tc => tc.LastRunTime);
+            });
+
+            // 配置 TestSuite 的其他属性
+            b.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            b.Property(x => x.Description)
+                .HasMaxLength(500);
+
+            b.Property(x => x.ProjectKey)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            b.Property(x => x.Version)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasDefaultValue("1.0.0");
+
+            b.Property(x => x.Status)
+                .IsRequired()
+                .HasConversion<int>()
+                .HasDefaultValue(TestSuiteStatus.Draft);
+
+            b.Property(x => x.LastExecutionTime)
+                .IsRequired(false);
+
+            // 配置 TimeSpan? 类型的转换
+            b.Property(x => x.AverageExecutionTime)
+                .IsRequired(false)
+                .HasConversion(
+                    v => v.HasValue ? v.Value.Ticks : (long?)null,
+                    v => v.HasValue ? TimeSpan.FromTicks(v.Value) : (TimeSpan?)null)
+                .HasColumnName("AverageExecutionTimeTicks");
+
+            // 索引
+            b.HasIndex(x => x.Name);
+            b.HasIndex(x => x.ProjectKey);
+            b.HasIndex(x => x.Status);
+            b.HasIndex(x => x.LastExecutionTime);
+            b.HasIndex(x => new { x.Name, x.ProjectKey }).IsUnique();
+        });
+        #endregion
 
         //https://github.com/abpframework/abp/blob/9.3.6/framework/src/Volo.Abp.EntityFrameworkCore/Volo/Abp/EntityFrameworkCore/ValueConverters/ExtraPropertiesValueConverter.cs
         //https://github.com/abpframework/abp/blob/9.3.6/framework/src/Volo.Abp.EntityFrameworkCore/Volo/Abp/EntityFrameworkCore/ValueComparers/ExtraPropertyDictionaryValueComparer.cs

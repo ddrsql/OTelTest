@@ -45,6 +45,6 @@
     "AuthorDeletionConfirmationMessage": "Are you sure to delete the author '{0}'?",
     "BirthDate": "Birth date",
     "NewAuthor": "New author",
-    "NotFound": "NotFound, id: {0}."
+    "Test.OTel:NotFound": "NotFound, id: {0}."
   }
 }

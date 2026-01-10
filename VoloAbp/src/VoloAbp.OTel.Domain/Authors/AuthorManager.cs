@@ -6,7 +6,7 @@ using Volo.Abp.Domain.Services;
 
 namespace VoloAbp.OTel.Authors;
 
-public class AuthorManager : DomainService
+public class AuthorManager : OTelDomainService
 {
     private readonly IAuthorRepository _authorRepository;
 
@@ -50,5 +50,11 @@ public class AuthorManager : DomainService
         }
 
         author.ChangeName(newName);
+    }
+
+    public async Task TestLocalizer(int id)
+    {
+        throw new Exception(L["Test.OTel:NotFound", id].ToString());
+        //throw new UserFriendlyException(L["Test.OTel:NotFound", id].ToString());
     }
 }
