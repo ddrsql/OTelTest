@@ -268,6 +268,12 @@ public class OTelDbContext :
             b.Property(x => x.LastExecutionTime)
                 .IsRequired(false);
 
+            b.Property(x => x.ExecutionStartTime)
+                .IsRequired(false);
+
+            b.Property(x => x.ExecutionEndTime)
+                .IsRequired(false);
+
             // 配置 TimeSpan? 类型的转换
             b.Property(x => x.AverageExecutionTime)
                 .IsRequired(false)

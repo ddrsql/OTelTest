@@ -13,17 +13,74 @@ namespace VoloAbp.OTel.TestSuites.Aggregates;
 /// </summary>
 public class TestSuite : FullAuditedAggregateRoot<Guid>
 {
+    /// <summary>
+    /// 测试集名称
+    /// </summary>
     public string Name { get; private set; }
+
+    /// <summary>
+    /// 描述
+    /// </summary>
     public string Description { get; private set; }
+
+    /// <summary>
+    /// 项目标识
+    /// </summary>
     public string ProjectKey { get; private set; }
+
+    /// <summary>
+    /// 版本号
+    /// </summary>
     public string Version { get; private set; }
+
+    /// <summary>
+    /// 测试配置
+    /// </summary>
     public TestConfiguration Configuration { get; private set; }
+
+    /// <summary>
+    /// 状态
+    /// </summary>
     public TestSuiteStatus Status { get; private set; } = TestSuiteStatus.Draft;
+
+    /// <summary>
+    /// 总测试用例数
+    /// </summary>
     public int TotalTestCases => _testCases.Count;
+
+    /// <summary>
+    /// 通过的测试用例数
+    /// </summary>
     public int PassedTestCases => _testCases.Count(tc => tc.Status == TestCaseStatus.Passed);
+
+    /// <summary>
+    /// 失败的测试用例数
+    /// </summary>
     public int FailedTestCases => _testCases.Count(tc => tc.Status == TestCaseStatus.Failed);
+
+    /// <summary>
+    /// 成功率 (0-100)
+    /// </summary>
     public double SuccessRate => TotalTestCases > 0 ? (double)PassedTestCases / TotalTestCases * 100 : 0;
+
+    /// <summary>
+    /// 最后一次执行时间（通常等于 ExecutionStartTime）
+    /// </summary>
     public DateTime? LastExecutionTime { get; private set; }
+
+    /// <summary>
+    /// 执行开始时间
+    /// </summary>
+    public DateTime? ExecutionStartTime { get; private set; }
+
+    /// <summary>
+    /// 执行结束时间
+    /// </summary>
+    public DateTime? ExecutionEndTime { get; private set; }
+
+    /// <summary>
+    /// 平均执行耗时
+    /// </summary>
     public TimeSpan? AverageExecutionTime { get; private set; }
 
     // 聚合内的子实体集合
@@ -58,6 +115,15 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
     }
 
     // 领域方法
+    /// <summary>
+    /// 添加新的测试用例到测试集。
+    /// </summary>
+    /// <param name="title">测试用例标题，在测试集中必须唯一。</param>
+    /// <param name="description">测试用例描述。</param>
+    /// <param name="steps">测试步骤。</param>
+    /// <param name="expectedResult">预期结果。</param>
+    /// <param name="priority">优先级，默认为 Medium。</param>
+    /// <exception cref="InvalidOperationException">如果测试集已归档或正在运行，或标题已存在。</exception>
     public void AddTestCase(
         string title,
         string description,
@@ -87,6 +153,12 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         _testCases.Add(newTestCase);
     }
 
+    /// <summary>
+    /// 从测试集中移除指定的测试用例。
+    /// </summary>
+    /// <param name="testCaseId">要移除的测试用例ID。</param>
+    /// <exception cref="InvalidOperationException">如果测试集已归档。</exception>
+    /// <exception cref="KeyNotFoundException">如果未找到指定的测试用例。</exception>
     public void RemoveTestCase(Guid testCaseId)
     {
         if (Status == TestSuiteStatus.Archived)
@@ -99,6 +171,17 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         _testCases.Remove(testCase);
     }
 
+    /// <summary>
+    /// 更新指定测试用例的详细信息。
+    /// </summary>
+    /// <param name="testCaseId">测试用例ID。</param>
+    /// <param name="title">新标题（可选）。</param>
+    /// <param name="description">新描述（可选）。</param>
+    /// <param name="steps">新步骤（可选）。</param>
+    /// <param name="expectedResult">新预期结果（可选）。</param>
+    /// <param name="priority">新优先级（可选）。</param>
+    /// <exception cref="KeyNotFoundException">如果未找到指定的测试用例。</exception>
+    /// <exception cref="InvalidOperationException">如果测试集已归档。</exception>
     public void UpdateTestCase(
         Guid testCaseId,
         string title = null,
@@ -114,6 +197,12 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         if (Status == TestSuiteStatus.Archived)
             throw new InvalidOperationException("已归档的测试集不能修改测试用例");
 
+        if (title != null && !title.Equals(testCase.Title, StringComparison.OrdinalIgnoreCase))
+        {
+            if (_testCases.Any(tc => tc.Id != testCaseId && tc.Title.Equals(title.Trim(), StringComparison.OrdinalIgnoreCase)))
+                throw new InvalidOperationException($"已存在标题为 '{title}' 的测试用例");
+        }
+
         testCase.UpdateDetails(
             title ?? testCase.Title,
             description ?? testCase.Description,
@@ -123,12 +212,22 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         );
     }
 
+    /// <summary>
+    /// 获取指定的测试用例。
+    /// </summary>
+    /// <param name="testCaseId">测试用例ID。</param>
+    /// <returns>找到的测试用例。</returns>
+    /// <exception cref="KeyNotFoundException">如果未找到指定的测试用例。</exception>
     public TestCase GetTestCase(Guid testCaseId)
     {
         return _testCases.FirstOrDefault(tc => tc.Id == testCaseId)
             ?? throw new KeyNotFoundException($"未找到ID为 {testCaseId} 的测试用例");
     }
 
+    /// <summary>
+    /// 开始执行测试集。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">如果测试集状态不是 Ready 或 Draft，或者没有启用的测试用例。</exception>
     public void Execute()
     {
         if (Status != TestSuiteStatus.Ready && Status != TestSuiteStatus.Draft)
@@ -140,6 +239,8 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
 
         Status = TestSuiteStatus.Running;
         LastExecutionTime = DateTime.UtcNow;
+        ExecutionStartTime = LastExecutionTime;
+        ExecutionEndTime = null;
 
         // 将所有启用的测试用例标记为待执行
         foreach (var testCase in enabledCases)
@@ -148,6 +249,15 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         }
     }
 
+    /// <summary>
+    /// 记录测试用例的执行结果。
+    /// </summary>
+    /// <param name="testCaseId">测试用例ID。</param>
+    /// <param name="status">执行状态。</param>
+    /// <param name="executionDuration">执行耗时。</param>
+    /// <param name="errorMessage">错误信息（如果有）。</param>
+    /// <param name="actualResult">实际结果（可选）。</param>
+    /// <exception cref="InvalidOperationException">如果测试集未在运行中。</exception>
     public void RecordTestCaseResult(
         Guid testCaseId,
         TestCaseStatus status,
@@ -174,21 +284,32 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         CheckAndUpdateCompletion();
     }
 
+    /// <summary>
+    /// 标记测试集执行完成。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">如果测试集未在运行中。</exception>
     public void CompleteExecution()
     {
         if (Status != TestSuiteStatus.Running)
             throw new InvalidOperationException("只有运行中的测试集可以标记为完成");
 
         Status = TestSuiteStatus.Completed;
+        ExecutionEndTime = DateTime.UtcNow;
         UpdateAverageExecutionTime();
     }
 
+    /// <summary>
+    /// 标记测试集执行失败。
+    /// </summary>
+    /// <param name="reason">失败原因。</param>
+    /// <exception cref="InvalidOperationException">如果测试集未在运行中。</exception>
     public void FailExecution(string reason)
     {
         if (Status != TestSuiteStatus.Running)
             throw new InvalidOperationException("只有运行中的测试集可以标记为失败");
 
         Status = TestSuiteStatus.Completed;
+        ExecutionEndTime = DateTime.UtcNow;
         UpdateAverageExecutionTime();
 
         // 标记所有未完成的测试用例为失败
@@ -198,14 +319,22 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         }
     }
 
+    /// <summary>
+    /// 归档测试集。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">如果测试集未完成、未就绪或未处于草稿状态。</exception>
     public void Archive()
     {
-        if (Status != TestSuiteStatus.Completed && Status != TestSuiteStatus.Ready)
-            throw new InvalidOperationException("只有已完成或就绪的测试集可以被归档");
+        if (Status != TestSuiteStatus.Completed && Status != TestSuiteStatus.Ready && Status != TestSuiteStatus.Draft)
+            throw new InvalidOperationException("只有已完成、就绪或草稿状态的测试集可以被归档");
 
         Status = TestSuiteStatus.Archived;
     }
 
+    /// <summary>
+    /// 将测试集标记为就绪状态。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">如果测试集不是 Draft 状态，或者没有测试用例。</exception>
     public void MarkAsReady()
     {
         if (Status != TestSuiteStatus.Draft)
@@ -217,11 +346,33 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         Status = TestSuiteStatus.Ready;
     }
 
+    /// <summary>
+    /// 将测试集重置为草稿状态。
+    /// </summary>
+    /// <exception cref="InvalidOperationException">如果测试集状态不是 Ready。</exception>
+    public void ResetToDraft()
+    {
+        if (Status != TestSuiteStatus.Ready)
+            throw new InvalidOperationException("只有就绪状态的测试集可以重置为草稿");
+
+        Status = TestSuiteStatus.Draft;
+    }
+
+    /// <summary>
+    /// 更新测试配置。
+    /// </summary>
+    /// <param name="newConfig">新的测试配置。</param>
+    /// <exception cref="ArgumentNullException">如果配置为空。</exception>
     public void UpdateConfiguration(TestConfiguration newConfig)
     {
         Configuration = newConfig ?? throw new ArgumentNullException(nameof(newConfig));
     }
 
+    /// <summary>
+    /// 更新版本号。
+    /// </summary>
+    /// <param name="version">新版本号。</param>
+    /// <exception cref="ArgumentException">如果版本号为空。</exception>
     public void UpdateVersion(string version)
     {
         if (string.IsNullOrWhiteSpace(version))
@@ -241,6 +392,7 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         if (!pendingCases.Any())
         {
             Status = TestSuiteStatus.Completed;
+            ExecutionEndTime = DateTime.UtcNow;
             UpdateAverageExecutionTime();
         }
     }
@@ -254,7 +406,7 @@ public class TestSuite : FullAuditedAggregateRoot<Guid>
         if (executedCases.Any())
         {
             var totalDuration = TimeSpan.FromTicks(
-                executedCases.Sum(tc => tc.ExecutionDuration.Value.Ticks)
+                executedCases.Sum(tc => tc.ExecutionDuration!.Value.Ticks)
             );
 
             AverageExecutionTime = TimeSpan.FromTicks(totalDuration.Ticks / executedCases.Count);

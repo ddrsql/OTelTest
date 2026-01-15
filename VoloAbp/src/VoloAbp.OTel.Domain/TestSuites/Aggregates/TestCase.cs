@@ -14,16 +14,59 @@ namespace VoloAbp.OTel.TestSuites.Aggregates;
 /// </summary>
 public class TestCase : Entity<Guid>
 {
+    /// <summary>
+    /// 测试用例标题
+    /// </summary>
     public string Title { get; private set; }
+
+    /// <summary>
+    /// 测试用例描述
+    /// </summary>
     public string Description { get; private set; }
+
+    /// <summary>
+    /// 测试步骤
+    /// </summary>
     public string Steps { get; private set; }
+
+    /// <summary>
+    /// 预期结果
+    /// </summary>
     public string ExpectedResult { get; private set; }
+
+    /// <summary>
+    /// 实际结果
+    /// </summary>
     public string ActualResult { get; private set; }
+
+    /// <summary>
+    /// 是否启用
+    /// </summary>
     public bool IsEnabled { get; private set; } = true;
+
+    /// <summary>
+    /// 优先级
+    /// </summary>
     public TestPriority Priority { get; private set; } = TestPriority.Medium;
+
+    /// <summary>
+    /// 当前状态
+    /// </summary>
     public TestCaseStatus Status { get; private set; } = TestCaseStatus.NotRun;
+
+    /// <summary>
+    /// 最后运行时间
+    /// </summary>
     public DateTime? LastRunTime { get; private set; }
+
+    /// <summary>
+    /// 执行耗时
+    /// </summary>
     public TimeSpan? ExecutionDuration { get; private set; }
+
+    /// <summary>
+    /// 错误信息
+    /// </summary>
     public string ErrorMessage { get; private set; }
 
     // 供 EF Core 使用
@@ -47,6 +90,14 @@ public class TestCase : Entity<Guid>
     }
 
     // 业务方法
+    /// <summary>
+    /// 更新测试用例的详细信息。
+    /// </summary>
+    /// <param name="title">新标题。</param>
+    /// <param name="description">新描述。</param>
+    /// <param name="steps">新步骤。</param>
+    /// <param name="expectedResult">新预期结果。</param>
+    /// <param name="priority">新优先级（可选）。</param>
     public void UpdateDetails(
         string title,
         string description,
@@ -63,6 +114,11 @@ public class TestCase : Entity<Guid>
             Priority = priority;
     }
 
+    /// <summary>
+    /// 记录执行结果。
+    /// </summary>
+    /// <param name="duration">执行耗时。</param>
+    /// <param name="errorMessage">错误信息。如果为空，则视为通过。</param>
     public void RecordExecutionResult(TimeSpan? duration = null, string errorMessage = null)
     {
         LastRunTime = DateTime.UtcNow;
@@ -74,6 +130,9 @@ public class TestCase : Entity<Guid>
             : TestCaseStatus.Failed;
     }
 
+    /// <summary>
+    /// 标记为待执行状态，重置之前的执行结果。
+    /// </summary>
     public void MarkAsPending()
     {
         Status = TestCaseStatus.Pending;
@@ -82,14 +141,29 @@ public class TestCase : Entity<Guid>
         ErrorMessage = null;
     }
 
+    /// <summary>
+    /// 禁用测试用例。
+    /// </summary>
     public void Disable() => IsEnabled = false;
+
+    /// <summary>
+    /// 启用测试用例。
+    /// </summary>
     public void Enable() => IsEnabled = true;
 
+    /// <summary>
+    /// 更新实际执行结果描述。
+    /// </summary>
+    /// <param name="actualResult">实际结果描述。</param>
     public void UpdateActualResult(string actualResult)
     {
         ActualResult = actualResult?.Trim() ?? string.Empty;
     }
 
+    /// <summary>
+    /// 检查测试用例是否已被执行。
+    /// </summary>
+    /// <returns>如果已执行（有最后运行时间）则返回 true。</returns>
     public bool HasBeenExecuted() => LastRunTime.HasValue;
 
     // 私有setter方法

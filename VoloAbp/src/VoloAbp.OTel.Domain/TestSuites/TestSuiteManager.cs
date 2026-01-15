@@ -27,6 +27,14 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
         _guidGenerator = guidGenerator;
     }
 
+    /// <summary>
+    /// 复制测试集。
+    /// </summary>
+    /// <param name="sourceTestSuiteId">源测试集ID。</param>
+    /// <param name="newName">新测试集名称。</param>
+    /// <param name="newVersion">新测试集版本（可选）。</param>
+    /// <returns>创建的克隆测试集。</returns>
+    /// <exception cref="ArgumentException">如果源测试集未找到或新名称为空。</exception>
     public async Task<TestSuite> CloneTestSuiteAsync(Guid sourceTestSuiteId, string newName, string newVersion = null)
     {
         var sourceTestSuite = await _testSuiteRepository.FindAsync(sourceTestSuiteId);
@@ -61,7 +69,15 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
         return clonedTestSuite;
     }
 
-    public async Task ImportTestCasesAsync(Guid testSuiteId, List<TestCaseImportInModel> testCaseImports)
+    /// <summary>
+    /// 批量导入测试用例。
+    /// </summary>
+    /// <param name="testSuiteId">目标测试集ID。</param>
+    /// <param name="testCaseImports">要导入的测试用例列表。</param>
+    /// <returns>导入结果。</returns>
+    /// <exception cref="ArgumentException">如果测试集未找到。</exception>
+    /// <exception cref="InvalidOperationException">如果测试集已归档。</exception>
+    public async Task<TestCaseImportResult> ImportTestCasesAsync(Guid testSuiteId, List<TestCaseImportInModel> testCaseImports)
     {
         var testSuite = await _testSuiteRepository.FindAsync(testSuiteId);
         if (testSuite == null)
@@ -70,8 +86,15 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
         if (testSuite.Status == TestSuiteStatus.Archived)
             throw new InvalidOperationException("已归档的测试集不能导入测试用例");
 
+        var result = new TestCaseImportResult
+        {
+            TotalCount = testCaseImports.Count
+        };
+
+        var index = 0;
         foreach (var import in testCaseImports)
         {
+            index++;
             try
             {
                 var priority = TestPriority.FromValue(import.Priority);
@@ -83,17 +106,34 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
                     import.ExpectedResult,
                     priority
                 );
+
+                result.SuccessCount++;
             }
             catch (Exception ex)
             {
-                // 记录错误但继续处理其他用例
-                Logger.LogWarning($"导入测试用例失败: {ex.Message}");
+                result.FailedCount++;
+                result.FailedImports.Add(new FailedImport
+                {
+                    Index = index,
+                    Title = import.Title,
+                    ErrorMessage = ex.Message
+                });
+                
+                // 记录警告日志
+                Logger.LogWarning($"导入测试用例失败 (Row {index}): {ex.Message}");
             }
         }
 
         await _testSuiteRepository.UpdateAsync(testSuite);
+        return result;
     }
 
+    /// <summary>
+    /// 生成测试报告。
+    /// </summary>
+    /// <param name="testSuiteId">测试集ID。</param>
+    /// <returns>生成的测试报告。</returns>
+    /// <exception cref="ArgumentException">如果测试集未找到。</exception>
     public async Task<TestSuiteReport> GenerateTestReportAsync(Guid testSuiteId)
     {
         var testSuite = await _testSuiteRepository.FindAsync(testSuiteId);
@@ -119,7 +159,7 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
         if (executedCases.Any())
         {
             report.TotalExecutionTime = TimeSpan.FromTicks(
-                executedCases.Sum(tc => tc.ExecutionDuration.Value.Ticks)
+                executedCases.Sum(tc => tc.ExecutionDuration!.Value.Ticks)
             );
         }
 
@@ -139,6 +179,12 @@ public class TestSuiteManager : OTelDomainService, ITestSuiteManager
         return report;
     }
 
+    /// <summary>
+    /// 验证测试集配置。
+    /// </summary>
+    /// <param name="testSuiteId">测试集ID。</param>
+    /// <returns>如果配置有效且可执行则返回 true，否则返回 false。</returns>
+    /// <exception cref="ArgumentException">如果测试集未找到。</exception>
     public async Task<bool> ValidateTestSuiteConfigurationAsync(Guid testSuiteId)
     {
         var testSuite = await _testSuiteRepository.FindAsync(testSuiteId);
