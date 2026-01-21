@@ -27,7 +27,8 @@ namespace AbpFramework.OTel.WebMpa
                 .AddService(serviceName, serviceNamespace: "ddrsql", serviceVersion: "1.0.0")
                 .AddAttributes(new[]
                 {
-                    new KeyValuePair<string, object>("deployment.environment", environment)
+                    new KeyValuePair<string, object>("deployment.environment", environment),
+                    new KeyValuePair<string, object>("deployment.environment", Environment.MachineName)
                 });
 
             var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
