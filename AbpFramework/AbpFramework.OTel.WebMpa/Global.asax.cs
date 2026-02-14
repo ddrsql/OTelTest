@@ -28,7 +28,7 @@ namespace AbpFramework.OTel.WebMpa
                 .AddAttributes(new[]
                 {
                     new KeyValuePair<string, object>("deployment.environment", environment),
-                    new KeyValuePair<string, object>("deployment.environment", Environment.MachineName)
+                    new KeyValuePair<string, object>("host.name", Environment.MachineName)
                 });
 
             var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
