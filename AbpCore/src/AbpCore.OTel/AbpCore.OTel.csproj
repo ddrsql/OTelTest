@@ -7,6 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Abp" Version="10.2.0" />
     <PackageReference Include="log4net" Version="3.1.0" />
-    <PackageReference Include="OpenTelemetry" Version="1.14.0-rc.1" />
+    <PackageReference Include="OpenTelemetry" Version="1.15.0" />
   </ItemGroup>
 </Project>
