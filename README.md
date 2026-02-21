@@ -1,6 +1,11 @@
-# 从“黑盒”到“全景”：在.NET中拥抱OpenTelemetry与SigNoz的可观测工具+
+# 从“黑盒”到“全景”：在.NET中拥抱OpenTelemetry与SigNoz的可观测工具
 
-> 作为开发者，你是否曾为这些问题困扰过？
+> **项目简介**：本仓库是一个实战指南与示例集合，展示了如何在不同版本的 ABP 框架（从传统的 .NET Framework 4.6.2 到现代的 Volo.Abp）中集成 **OpenTelemetry (OTel)**，并将可观测性数据（Tracing, Logs, Metrics）统一输出到开源观测平台 **SigNoz**。
+
+
+## 🚀 为什么需要可观测性？
+
+作为开发者，你是否曾为这些问题困扰过？
 
 * 问题排查像“开盲盒”：用户报告接口慢，你只能埋头翻看分散的日志文件，试图从碎片信息中拼凑出一次请求的完整路径。
 * 监控数据“烟囱林立”：Metrics、Tracing、Logs 分散在不同的系统里，查看一个完整的问题上下文需要在多个标签页间反复横跳。
@@ -9,35 +14,62 @@
 如果你对以上任何一点深感共鸣，那么是时候了解 OpenTelemetry（简称OTel）​ 和 SigNoz​ 这个组合了。它们一个定义了开放标准，一个提供了开箱即用的实现。
 
 
-## OpenTelemetry：可观测性
+## [OpenTelemetry](https://opentelemetry.io/docs/what-is-opentelemetry)：可观测性
 想象一下，你的应用是一个由微服务、数据库、消息队列组成的复杂城市。过去，每个组件（或APM厂商）都说着自己的“方言”（私有协议），导致沟通成本极高。
-OpenTelemetry (OTel) 就是为解决这个问题而生的。​ 它由CNCF孵化，目标是为可观测性数据（追踪、指标、日志）提供一套与供应商无关的、统一的采集和传输标准。你可以把它理解为可观测性领域的“普通话”或“USB-C接口”。
-
+OpenTelemetry (OTel) 就是为解决这个问题而生的。​ 它由CNCF孵化，目标是为可观测性数据[（追踪、指标、日志）](https://opentelemetry.io/zh/docs/concepts/signals/)提供一套与供应商无关的、统一的采集和传输标准。你可以把它理解为可观测性领域的“普通话”或“USB-C接口”。  
 它的核心优势在于：
 * 供应商中立： 用一套SDK和API完成数据采集，通过简单的配置即可将数据发送到任何支持OTLP协议的后端（如kibana、Jaeger、zipkin、Tempo、SigNoz）。
-* 一次集成，多处可用： 避免了对特定APM厂商的锁定，未来切换后端成本极低。
+* 一次集成，多处可用： 避免了对特定APM厂商的锁定，未来切换后端成本极低。  
 
-## SigNoz：开箱即用的全景观测平台
-### 安装signoz
-https://signoz.io/docs/install/docker/
+[演示架构](https://opentelemetry.io/docs/demo/architecture/)
+![](images/2026-02-21-14-36-30.png)
+
+## [SigNoz](https://github.com/SigNoz/signoz/blob/main/README.md)：开箱即用的全景观测平台
+Signoz 是一个基于 OpenTelemetry、ClickHouse、Go、TypeScript/React 等技术栈构建的开源可观测性平台，用于统一采集、分析和可视化日志、指标和链路追踪数据。  
+[技术架构](https://signoz.io/docs/architecture/)
+![](images/2026-02-21-14-39-48.png)
+[SigNoz - 日志性能基准测试(与ElasticSearch、Loki比较)](https://signoz.io/blog/logs-performance-benchmark/?utm_source=github-readme&utm_medium=logs-benchmark)  
+[ClickHouse vs. Elasticsearch：十亿行数据的较量](https://clickhouse.com/blog/clickhouse_vs_elasticsearch_the_billion_row_matchup)
+
+## 🛠️ 环境搭建：安装signoz
+使用 Docker Compose 快速安装：  
+https://signoz.io/docs/install/docker/ 
 ```shell
-# 使用 Docker Compose 安装 SigNoz
 git clone -b main https://github.com/SigNoz/signoz.git && cd signoz/deploy/
 cd docker
 docker compose up -d --remove-orphans
 ```
-
-## AbpFramework(.NetFramework4.6.2及以上版本)
-https://github.com/ddrsql/OTelTest/tree/main/AbpFramework
-
-## AbpCore(.NetCore3.1及以上版本)
-https://github.com/ddrsql/OTelTest/tree/main/AbpCore
-
-## Volo.Abp
-https://github.com/ddrsql/OTelTest/tree/main/VoloAbp
+![](images/2026-02-17-21-51-53.png)
+安装完成后，访问 http://127.0.0.1:8080 即可看到 SigNoz 的仪表盘。
+![](images/2026-02-17-21-54-29.png)
 
 
+## 📂 示例项目导航
 
-参考
+本仓库包含针对不同 ABP 版本的集成方案，请根据你的项目背景选择：
 
-https://lecarvalho.medium.com/opentelemetry-logs-using-log4net-f573a800c627
+| 项目名称 | 框架版本 | 说明 | 快速跳转 |
+| :--- | :--- | :--- | :--- |
+| **AbpFramework** | .NET Framework 4.6.2 | 适用于传统的 ABP (Legacy) 项目，集成 log4net 日志导出。 | [查看详情](https://github.com/ddrsql/OTelTest/tree/main/AbpFramework) |
+| **AbpCore** | .NET Core 3.1+ | 适用于标准的 ABP 框架（基于 .NET Core 版本）。 | [查看详情](https://github.com/ddrsql/OTelTest/tree/main/AbpCore) |
+| **VoloAbp** | .NET 6/8+ | 适用于最新的 Volo.Abp (vNext) 框架集成。 | [查看详情](https://github.com/ddrsql/OTelTest/tree/main/VoloAbp) |
+
+
+## 🏁 如何开始使用？
+
+1. **环境准备**：确保已按上述步骤启动 SigNoz，并确保本地有对应的 .NET 运行时环境。
+2. **选择项目**：进入对应的子目录，例如 `cd AbpCore`。
+3. **配置连接**：检查 `appsettings.json` 或 `Web.config` 中的 OTel 端点配置。
+4. **运行应用**：
+   ```bash
+   dotnet run --project src/YourProject.Web.Host
+   ```
+5. **验证数据**：请求应用接口后，打开 SigNoz 的 **Services** 标签页，即可看到名为 `AbpFrameworkOTel` (或你自定义) 的服务。
+
+
+
+## 📚 参考资料
+
+* [OpenTelemetry 官方文档](https://opentelemetry.io/docs/)
+* [SigNoz 官方文档](https://signoz.io/docs/)
+* [OpenTelemetry Logs using log4net](https://lecarvalho.medium.com/opentelemetry-logs-using-log4net-f573a800c627)
