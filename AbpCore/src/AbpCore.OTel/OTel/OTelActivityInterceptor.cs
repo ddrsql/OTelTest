@@ -1,7 +1,7 @@
 ﻿using Castle.Core.Logging;
 using Castle.DynamicProxy;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -9,12 +9,17 @@ namespace AbpCore.OTel
 {
     public class OTelActivityInterceptor : IInterceptor
     {
-        private static readonly ActivitySource _activitySource = new ActivitySource(OTelModule.AspNetSourceName);
+        //private static readonly ActivitySource _activitySource = new ActivitySource(OTelModule.AspNetSourceName);
+        private readonly ActivitySource _activitySource;
 
         private readonly ILogger _logger;
-        public OTelActivityInterceptor(ILogger logger)
+        private readonly IConfiguration _configuration;
+
+        public OTelActivityInterceptor(ActivitySource activitySource, ILogger logger, IConfiguration configuration)
         {
+            _activitySource = activitySource;
             _logger = logger;
+            _configuration = configuration;
         }
 
         private static MethodInfo GetMethodInfo(IInvocation invocation)
@@ -37,9 +42,8 @@ namespace AbpCore.OTel
             var method = GetMethodInfo(invocation);
 
             // 判断是否启用
-            var oTelEnabled = ConfigurationManager.AppSettings["OTel_Enabled"] ?? "false";
-            bool.TryParse(oTelEnabled, out bool oTelEnabledBool);
-            if (!oTelEnabledBool)
+            var oTelEnabled = _configuration.GetValue<bool>("OTelOptions:Enabled");
+            if (!oTelEnabled)
             {
                 invocation.Proceed();
                 return;
@@ -59,9 +63,8 @@ namespace AbpCore.OTel
                 activity = _activitySource.StartActivity(method.DeclaringType?.Name + "." + method.Name);
                 if (activity != null && activity.IsAllDataRequested == true)
                 {
-                    var oTelMethodParameters = ConfigurationManager.AppSettings["OTel_RecordMethodParam"] ?? "false";
-                    bool.TryParse(oTelMethodParameters, out bool oTelMethodParametersBool);
-                    if (oTelMethodParametersBool)
+                    var oTelMethodParameters = _configuration.GetValue<bool>("OTelOptions:RecordMethodParam", false);
+                    if (oTelMethodParameters)
                     {
                         var parameters = method.GetParameters();
                         for (int i = 0; i < parameters.Length; i++)

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 namespace AbpCore.OTel.Web.Startup;
 
 [DependsOn(typeof(OTelWebCoreModule))]
+[DependsOn(typeof(OTelModule))]
 public class OTelWebMvcModule : AbpModule
 {
     private readonly IWebHostEnvironment _env;

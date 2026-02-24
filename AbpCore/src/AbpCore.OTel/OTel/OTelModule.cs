@@ -1,6 +1,6 @@
 ﻿using Abp.Modules;
 using Castle.MicroKernel.Registration;
-using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace AbpCore.OTel
 {
@@ -9,9 +9,9 @@ namespace AbpCore.OTel
         public const string AspNetSourceName = "OpenTelemetry.Instrumentation.AspNet.Telemetry";
         public override void PreInitialize()
         {
-            var oTelEnabled = ConfigurationManager.AppSettings["OTel_Enabled"] ?? "false";
-            bool.TryParse(oTelEnabled, out bool oTelEnabledBool);
-            if (oTelEnabledBool)
+            var configuration = IocManager.Resolve<IConfiguration>();
+            var oTelEnabled = configuration.GetValue<bool>("OTelOptions:Enabled");
+            if (oTelEnabled)
             {
                 Configuration.IocManager.IocContainer.Register(Component.For<OTelActivityInterceptor>());
                 OTelActivityInterceptorRegistrar.Initialize(this.IocManager);

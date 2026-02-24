@@ -12,7 +12,7 @@ namespace AbpCore.OTel;
 /// <summary>
 /// Derive your application services from this class.
 /// </summary>
-public abstract class OTelAppServiceBase : ApplicationService
+public abstract class OTelAppServiceBase : ApplicationService, IOTelActivityEnabled
 {
     public TenantManager TenantManager { get; set; }
 
