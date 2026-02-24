@@ -12,6 +12,8 @@ import postcss from "gulp-postcss";
 import url from "postcss-url";
 
 //https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core
+//开发环境：在Web.Mvc文件夹 中打开终端并运行 npm run create-bundles
+//生产环境配置：在Web.Mvc文件夹 中打开终端并运行 npm run build
 /*const __dirname = import.meta.dirname;*/
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';

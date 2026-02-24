@@ -253,3 +253,4 @@ paket-files/
 
 /AbpFramework/AbpFramework.OTel.WebMpa/App_Data
 /AbpCore/src/AbpCore.OTel.Web.Mvc/App_Data/Logs
+/AbpCore/src/AbpCore.OTel.Web.Mvc/logs

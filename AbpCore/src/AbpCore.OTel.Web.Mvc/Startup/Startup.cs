@@ -7,7 +7,9 @@ using AbpCore.OTel.Configuration;
 using AbpCore.OTel.Identity;
 using AbpCore.OTel.Web.Resources;
 using Castle.Facilities.Logging;
+using Castle.Services.Logging.SerilogIntegration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -34,6 +37,9 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // 集成 OpenTelemetry
+        services.AddAbpOpenTelemetry(_appConfiguration, _hostingEnvironment);
+
         // MVC
         services.AddControllersWithViews(
                 options =>
@@ -94,17 +100,22 @@ public class Startup
             });
         });
 
-        // Configure Abp and Dependency Injection
-        services.AddAbpWithoutCreatingServiceProvider<OTelWebMvcModule>(
-            // Configure Log4Net logging
-            options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(
-                f => f.UseAbpLog4Net().WithConfig(
-                    _hostingEnvironment.IsDevelopment()
-                        ? "log4net.config"
-                        : "log4net.Production.config"
-                    )
-            )
-        );
+        //// Configure Abp and Dependency Injection
+        //services.AddAbpWithoutCreatingServiceProvider<OTelWebMvcModule>(
+        //    // Configure Log4Net logging
+        //    options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(
+        //        f => f.UseAbpLog4Net().WithConfig(
+        //            _hostingEnvironment.IsDevelopment()
+        //                ? "log4net.config"
+        //                : "log4net.Production.config"
+        //            )
+        //    )
+        //);
+        services.AddAbpWithoutCreatingServiceProvider<OTelWebMvcModule>(options =>
+        {
+            options.IocManager.IocContainer.AddFacility<LoggingFacility>(f =>
+                f.LogUsing(new SerilogFactory(Log.Logger)));
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
