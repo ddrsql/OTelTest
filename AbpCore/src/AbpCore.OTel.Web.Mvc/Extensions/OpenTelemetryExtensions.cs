@@ -98,13 +98,7 @@ public static class OpenTelemetryExtension
                 meterBuilder
                 .AddProcessInstrumentation()
                 .AddRuntimeInstrumentation()
-                // 使用 AddMeter 替代 AddAspNetCoreInstrumentation 以避免路由约束冲突
-                .AddMeter("Microsoft.AspNetCore.Hosting")
-                .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-                .AddMeter("Microsoft.AspNetCore.Http.Connections")
-                .AddMeter("Microsoft.AspNetCore.Routing")
-                .AddMeter("Microsoft.AspNetCore.Diagnostics")
-                .AddMeter("Microsoft.AspNetCore.Mvc")
+                .AddAspNetCoreInstrumentation()
                 .AddOtlpExporter(options =>
                 {
                     options.Endpoint = new Uri(endpoint, "/v1/metrics");
