@@ -39,9 +39,9 @@ git clone -b main https://github.com/SigNoz/signoz.git && cd signoz/deploy/
 cd docker
 docker compose up -d --remove-orphans
 ```
-![](images/2026-02-17-21-51-53.png)
+![](images/2026-02-26-23-10-02.png)
 安装完成后，访问 http://127.0.0.1:8080 即可看到 SigNoz 的仪表盘。
-![](images/2026-02-17-21-54-29.png)
+![](images/2026-02-26-23-11-44.png)
 
 
 ## 📂 示例项目导航
@@ -55,21 +55,112 @@ docker compose up -d --remove-orphans
 | **VoloAbp** | .NET 6/8+ | 适用于最新的 Volo.Abp (vNext) 框架集成。 | [查看详情](https://github.com/ddrsql/OTelTest/tree/main/VoloAbp) |
 
 
-## 🏁 如何开始使用？
+## 🏁 使用效果
+集成通过AOP（面向切面编程）拦截器实现了应用内方法的自动追踪，并在以下监控维度中清晰地展现了效果：
+### Services（服务监控）
+![](images/2026-02-26-23-26-36.png)
+![](images/2026-02-26-23-35-32.png)
+### Logs（日志）
+![](images/2026-02-26-23-37-59.png)
+![](images/2026-02-26-23-41-43.png)
+### Traces（链路追踪）
+![](images/2026-02-26-23-38-17.png)
+![](images/2026-02-26-23-41-06.png)
 
-1. **环境准备**：确保已按上述步骤启动 SigNoz，并确保本地有对应的 .NET 运行时环境。
-2. **选择项目**：进入对应的子目录，例如 `cd AbpCore`。
-3. **配置连接**：检查 `appsettings.json` 或 `Web.config` 中的 OTel 端点配置。
-4. **运行应用**：
-   ```bash
-   dotnet run --project src/YourProject.Web.Host
-   ```
-5. **验证数据**：请求应用接口后，打开 SigNoz 的 **Services** 标签页，即可看到名为 `AbpFrameworkOTel` (或你自定义) 的服务。
+### 被追踪的业务方法示例
+以下是一个简单的服务类方法，其调用链将被追踪。方法内记录了日志，便于在Traces和Logs中关联观察。
+```c#
+public virtual void Test()
+{
+   Logger.LogInformation($"{nameof(BookAppService)}.{nameof(Test)}");
+   TestPublic();
+   TestPublicVirtual();
+   TestPrivate();
+}
+public virtual void TestPublic()
+{
+   Logger.LogInformation($"{nameof(BookAppService)}.{nameof(TestPublic)}");
+}
+public virtual void TestPublicVirtual()
+{
+   Logger.LogInformation($"{nameof(BookAppService)}.{nameof(TestPublicVirtual)}");
+}
+private void TestPrivate()
+{
+   Logger.LogInformation($"{nameof(BookAppService)}.{nameof(TestPrivate)}");
+}
+```
 
+### 通过AOP拦截器实现方法级追踪
+VoloAbp中通过定义的[OTelActivityInterceptor](https://github.com/ddrsql/OTelTest/blob/main/VoloAbp/src/VoloAbp.OTel/OTel/OTelActivityInterceptor.cs)，它继承自Volo.Abp框架的AbpInterceptor。该拦截器负责在目标方法执行前后自动创建和停止OpenTelemetry的Activity，从而实现无侵入式的耗时追踪。[AbpFramework OTelActivityInterceptor ](https://github.com/ddrsql/OTelTest/blob/main/AbpFramework/AbpFramework.OTel/OTel/OTelActivityInterceptor.cs)与[AbpCore OTelActivityInterceptor](https://github.com/ddrsql/OTelTest/blob/main/AbpCore/src/AbpCore.OTel/OTel/OTelActivityInterceptor.cs)基本类似
+```c#
+public class OTelActivityInterceptor : AbpInterceptor, ITransientDependency
+{
+   private readonly ActivitySource _activitySource;
+   //private readonly IJsonSerializer _jsonSerializer;
+   private readonly ILogger<OTelActivityInterceptor> _logger;
+   private readonly IConfiguration _configuration;
+   private readonly OTelOptions _oTelOptions;
 
+   public OTelActivityInterceptor(
+      ActivitySource activitySource,
+      //IJsonSerializer jsonSerializer, 
+      ILogger<OTelActivityInterceptor> logger,
+      IConfiguration configuration,
+      IOptionsSnapshot<OTelOptions> oTelOptions
+      )
+   {
+      _activitySource = activitySource;
+      //_jsonSerializer = jsonSerializer;
+      _logger = logger;
+      _configuration = configuration;
+      _oTelOptions = oTelOptions.Value;
+   }
+
+   public override async Task InterceptAsync(IAbpMethodInvocation invocation)
+   {
+      _logger.LogDebug($"方法调用前：{invocation.Method.DeclaringType?.Name}.{invocation.Method.Name}");
+      if (!_oTelOptions.Enabled)
+      {
+            await invocation.ProceedAsync();
+            return;
+      }
+
+      if (!OTelActivityHelper.IsOTelActivityMethod(invocation.Method, out var oTelActivityAttribute))
+      {
+            await invocation.ProceedAsync();
+            return;
+      }
+
+      // https://opentelemetry.io/docs/languages/dotnet/traces/best-practices/
+      Activity activity = null;
+      try
+      {
+            activity = _activitySource.StartActivity(invocation.Method.DeclaringType?.Name + "." + invocation.Method.Name);
+            //if (activity != null && activity.IsAllDataRequested == true)
+            //{
+            //    activity.SetTag("", "");
+            //}
+      }
+      finally
+      {
+            await invocation.ProceedAsync();
+            activity?.Stop();
+            activity?.Dispose();
+      }
+
+      _logger.LogDebug($"方法调用后：{invocation.Method.DeclaringType?.Name}.{invocation.Method.Name}");
+   }
+}
+```
 
 ## 📚 参考资料
 
 * [OpenTelemetry 官方文档](https://opentelemetry.io/docs/)
 * [SigNoz 官方文档](https://signoz.io/docs/)
 * [OpenTelemetry Logs using log4net](https://lecarvalho.medium.com/opentelemetry-logs-using-log4net-f573a800c627)
+
+
+### 🔍 延伸阅读/推广
+📱 [运营商正规SIM卡：超大流量+通话短信全功能，推广可获返佣，点击查看 >>](https://github.com/ddrsql/OTelTest/blob/main/SIM.md)  
+（推广：为中国移动/联通/电信/广电四大运营商正规发行的手机SIM卡，拥有11位手机号码，支持接打电话、收发短信等完整通信功能，可正常注册微信、绑定银行卡。资费详情及办理流程以活动页面为准。）
