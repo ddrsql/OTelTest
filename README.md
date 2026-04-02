@@ -1,5 +1,6 @@
 # 从“黑盒”到“全景”：在.NET中拥抱OpenTelemetry与SigNoz的可观测工具
 
+[点击查看PDF文档](Unified_.NET_Observability.pdf)
 > **项目简介**：本仓库是一个实战指南与示例集合，展示了如何在不同版本的 ABP 框架（从传统的 .NET Framework 4.6.2 到现代的 Volo.Abp）中集成 **OpenTelemetry (OTel)**，并将可观测性数据（Tracing, Logs, Metrics）统一输出到开源观测平台 **SigNoz**。
 
 
