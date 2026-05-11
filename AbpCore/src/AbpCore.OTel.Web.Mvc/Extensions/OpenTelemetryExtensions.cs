@@ -31,7 +31,7 @@ public static class OpenTelemetryExtension
         }
         var endpoint = new Uri(configuration.GetValue<string>("OTelOptions:Endpoint", ""));
         var ratioSampler = configuration.GetValue<double>("OTelOptions:RatioSampler", 1.0);
-        // 将日志集成到 OpenTelemetry 管道中，并导出到后端（如 OTLP Collector）
+        // 将日志集成到 OpenTelemetry 管道中，并导出到后端（如 OTLP Collector）不支持写法
         //services.AddOpenTelemetry(loggerOptions =>
         //{
         //    loggerOptions.IncludeScopes = true;  //启用日志作用域（Scopes），将上下文信息（如请求 ID、用户信息）包含在日志中。

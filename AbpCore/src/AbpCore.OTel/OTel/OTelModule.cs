@@ -1,6 +1,7 @@
 ﻿using Abp.Modules;
 using Castle.MicroKernel.Registration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AbpCore.OTel
 {
@@ -10,8 +11,16 @@ namespace AbpCore.OTel
         public override void PreInitialize()
         {
             var configuration = IocManager.Resolve<IConfiguration>();
-            var oTelEnabled = configuration.GetValue<bool>("OTelOptions:Enabled");
-            if (oTelEnabled)
+            var options = new OTelOptions();
+            configuration.GetSection(OTelOptions.Key).Bind(options);
+
+            IocManager.IocContainer.Register(
+                Component.For<IOptions<OTelOptions>>()
+                    .Instance(Options.Create(options))
+                    .LifestyleSingleton()
+            );
+
+            if (options.Enabled)
             {
                 Configuration.IocManager.IocContainer.Register(Component.For<OTelActivityInterceptor>());
                 OTelActivityInterceptorRegistrar.Initialize(this.IocManager);

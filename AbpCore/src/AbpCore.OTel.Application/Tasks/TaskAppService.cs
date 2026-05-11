@@ -34,7 +34,7 @@ namespace AbpCore.OTel.Tasks
             _userRepository = userRepository;
         }
 
-        public GetTasksOutput GetTasks(GetTasksInput input)
+        public virtual GetTasksOutput GetTasks(GetTasksInput input)
         {
             Test();
             var tasks = _taskRepository.GetAllIncluding(x=>x.AssignedUser)
@@ -90,7 +90,7 @@ namespace AbpCore.OTel.Tasks
             //ABP automatically saves all changes when a 'unit of work' scope ends (without any exception).
         }
 
-        public void CreateTask(CreateTaskInput input)
+        public virtual void CreateTask(CreateTaskInput input)
         {
             //Creating a new Task entity with given input's properties
             var task = ObjectMapper.Map<Task>(input);

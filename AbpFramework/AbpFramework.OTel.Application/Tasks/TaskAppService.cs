@@ -37,8 +37,8 @@ namespace AbpFramework.OTel.Tasks
         public virtual GetTasksOutput GetTasks(GetTasksInput input)
         {
             Test();
-            var tasks = _taskRepository.GetAllIncluding(x=>x.AssignedUser)
-                .WhereIf(input.State != 0,x=>x.State == input.State);
+            var tasks = _taskRepository.GetAllIncluding(x => x.AssignedUser)
+                .WhereIf(input.State != 0, x => x.State == input.State);
 
             //Used AutoMapper to automatically convert List<Task> to List<TaskDto>.
             return new GetTasksOutput

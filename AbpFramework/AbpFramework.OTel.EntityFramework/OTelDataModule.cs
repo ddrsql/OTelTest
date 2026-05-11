@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure.Interception;
 using System.Reflection;
 using Abp.Modules;
 using Abp.Zero.EntityFramework;
@@ -14,6 +15,8 @@ namespace AbpFramework.OTel
             Database.SetInitializer(new CreateDatabaseIfNotExists<OTelDbContext>());
 
             Configuration.DefaultNameOrConnectionString = "Default";
+
+            DbInterception.Add(new TaggedTraceidCommandInterceptor());
         }
 
         public override void Initialize()

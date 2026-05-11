@@ -34,6 +34,9 @@ namespace AbpFramework.OTel.WebMpa
     {
         public override void PreInitialize()
         {
+            //启用、禁用审计日志
+            Configuration.Auditing.IsEnabled = false;
+
             //Enable database based localization
             Configuration.Modules.Zero().LanguageManagement.EnableDbLocalization();
 

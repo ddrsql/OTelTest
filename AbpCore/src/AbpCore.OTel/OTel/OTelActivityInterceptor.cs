@@ -2,6 +2,7 @@
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -67,16 +68,16 @@ namespace AbpCore.OTel
                     if (oTelMethodParameters)
                     {
                         var parameters = method.GetParameters();
-                        for (int i = 0; i < parameters.Length; i++)
+                        if (parameters.Length > 0)
                         {
-                            // 参数名
-                            var name = parameters[i].Name;
-                            // 类型
-                            //var type = parameters[i].ParameterType;
-                            // 值
-                            var value = invocation.GetArgumentValue(i);
-                            var valueStr = JsonConvert.SerializeObject(value);
-                            activity?.SetTag(name, valueStr);
+                            var args = new Dictionary<string, object>();
+                            for (int i = 0; i < parameters.Length; i++)
+                            {
+                                // 参数名、值
+                                args[parameters[i].Name] = invocation.GetArgumentValue(i);
+                            }
+                            if (args.Count > 0)
+                                activity?.SetTag("arguments", JsonConvert.SerializeObject(args));
                         }
                     }
                 }
