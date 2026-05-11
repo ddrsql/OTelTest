@@ -21,6 +21,8 @@ public class OTelWebMvcModule : AbpModule
 
     public override void PreInitialize()
     {
+        //启用、禁用审计日志
+        Configuration.Auditing.IsEnabled = false;
         Configuration.Navigation.Providers.Add<OTelNavigationProvider>();
     }
 

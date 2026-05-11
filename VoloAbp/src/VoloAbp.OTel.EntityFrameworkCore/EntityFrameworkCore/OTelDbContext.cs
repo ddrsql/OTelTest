@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Options;
 using System;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using Volo.Abp.AuditLogging;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -30,11 +32,13 @@ namespace VoloAbp.OTel.EntityFrameworkCore;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
+[ReplaceDbContext(typeof(IAuditLoggingDbContext))]
 [ConnectionStringName("Default")]
 public class OTelDbContext :
     AbpDbContext<OTelDbContext>,
     ITenantManagementDbContext,
-    IIdentityDbContext
+    IIdentityDbContext,
+    IAuditLoggingDbContext
 {
     // 1. 定义一个静态的、宽松的 Options
     private static readonly JsonSerializerOptions RelaxedJsonOptions = new JsonSerializerOptions
@@ -80,6 +84,10 @@ public class OTelDbContext :
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
+
+    public DbSet<AuditLog> AuditLogs => throw new NotImplementedException();
+
+    public DbSet<AuditLogExcelFile> AuditLogExcelFiles => throw new NotImplementedException();
 
     #endregion
 
@@ -343,4 +351,19 @@ public class OTelDbContext :
             }
         }
     }
+
+    #region DbCommandInterceptor
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (LazyServiceProvider != null)
+        {
+            var interceptor = LazyServiceProvider.LazyGetRequiredService<TaggedTraceidCommandInterceptor>();
+            optionsBuilder.AddInterceptors(interceptor);
+        }
+
+        base.OnConfiguring(optionsBuilder);
+    }
+
+    #endregion
 }

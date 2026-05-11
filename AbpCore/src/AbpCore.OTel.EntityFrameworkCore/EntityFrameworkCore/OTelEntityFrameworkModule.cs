@@ -3,6 +3,8 @@ using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
 using AbpCore.OTel.EntityFrameworkCore.Seed;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System;
 
 namespace AbpCore.OTel.EntityFrameworkCore;
 
@@ -30,6 +32,8 @@ public class OTelEntityFrameworkModule : AbpModule
                 {
                     OTelDbContextConfigurer.Configure(options.DbContextOptions, options.ConnectionString);
                 }
+                var interceptor = IocManager.Resolve<TaggedTraceidCommandInterceptor>();
+                options.DbContextOptions.AddInterceptors(interceptor);
             });
         }
     }

@@ -53,7 +53,6 @@ namespace AbpFramework.OTel.EntityFramework
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            System.Data.Entity.Infrastructure.Interception.DbInterception.Add(new TaggedTraceidCommandInterceptor());
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<DynamicProperty>().Property(p => p.PropertyName).HasMaxLength(250);

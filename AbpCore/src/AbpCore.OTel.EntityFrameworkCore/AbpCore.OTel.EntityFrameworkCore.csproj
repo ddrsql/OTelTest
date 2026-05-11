@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbpCore.OTel.Core\AbpCore.OTel.Core.csproj" />
+    <ProjectReference Include="..\AbpCore.OTel\AbpCore.OTel.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations\" />

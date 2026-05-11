@@ -22,8 +22,13 @@ namespace VoloAbp.OTel
         public double RatioSampler { get; set; }
 
         /// <summary>
-        /// OTel上报地址
+        /// 是否记录 SQL 参数到 Span Tag
         /// </summary>
-        public string Endpoint { get; set; }
+        public bool RecordSqlParameter { get; set; }
+
+        /// <summary>
+        /// 是否记录方法参数到 Span Tag
+        /// </summary>
+        public bool RecordMethodParam { get; set; }
     }
 }

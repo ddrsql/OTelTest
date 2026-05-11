@@ -10,6 +10,7 @@ using OpenTelemetry.Trace;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace Microsoft.AspNetCore.Extensions;
 
@@ -34,6 +35,14 @@ public static class OpenTelemetryExtensions
             {
                 options.Endpoint = new Uri(endpoint, "/v1/logs");
                 options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+
+                // 关键：提供一个独立的 HttpClient，跳过所有注册的中间件
+                options.HttpClientFactory = () =>
+                {
+                    var handler = new HttpClientHandler();
+                    // 如果有代理或证书校验需求，在这里配置 handler
+                    return new HttpClient(handler);
+                };
             });
             //loggerOptions.AddConsoleExporter();
         });

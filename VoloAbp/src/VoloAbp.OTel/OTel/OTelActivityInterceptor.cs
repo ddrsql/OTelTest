@@ -60,10 +60,20 @@ namespace VoloAbp.OTel
             try
             {
                 activity = _activitySource.StartActivity(invocation.Method.DeclaringType?.Name + "." + invocation.Method.Name);
-                //if (activity != null && activity.IsAllDataRequested == true)
-                //{
-                //    activity.SetTag("", "");
-                //}
+                if (activity != null && activity.IsAllDataRequested == true && _oTelOptions.RecordMethodParam)
+                {
+                    var parameters = invocation.Method.GetParameters();
+                    if (parameters.Length > 0)
+                    {
+                        var args = new Dictionary<string, object>();
+                        for (int i = 0; i < parameters.Length; i++)
+                        {
+                            args[parameters[i].Name] = invocation.Arguments[i];
+                        }
+                        if (args.Count > 0)
+                            activity.SetTag("arguments", JsonSerializer.Serialize(args));
+                    }
+                }
             }
             finally
             {

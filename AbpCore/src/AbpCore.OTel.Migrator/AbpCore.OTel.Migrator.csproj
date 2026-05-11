@@ -15,7 +15,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.Castle.Log4Net" Version="10.2.0" />
+    <PackageReference Include="Abp.Castle.Log4Net" Version="10.4.0" />
+    <PackageReference Include="log4net" Version="3.3.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AbpCore.OTel.Core\AbpCore.OTel.Core.csproj" />
