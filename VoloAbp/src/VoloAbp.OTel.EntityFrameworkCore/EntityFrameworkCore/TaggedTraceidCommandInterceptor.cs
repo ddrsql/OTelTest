@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.Json;
 using Volo.Abp.Tracing;
 
 namespace VoloAbp.OTel.EntityFrameworkCore;
@@ -19,10 +20,11 @@ namespace VoloAbp.OTel.EntityFrameworkCore;
 public class TaggedTraceidCommandInterceptor : DbCommandInterceptor, ISingletonDependency
 {
     private readonly OTelOptions _oTelOptions;
-
-    public TaggedTraceidCommandInterceptor(IOptions<OTelOptions> oTelOptions)
+    private readonly IJsonSerializer _jsonSerializer;
+    public TaggedTraceidCommandInterceptor(IOptions<OTelOptions> oTelOptions,IJsonSerializer jsonSerializer)
     {
         _oTelOptions = oTelOptions.Value;
+        _jsonSerializer = jsonSerializer;
     }
 
     /// <summary>
@@ -146,13 +148,13 @@ public class TaggedTraceidCommandInterceptor : DbCommandInterceptor, ISingletonD
     /// <summary>
     /// 将 DbParameterCollection 格式化为 JSON 对象字符串。
     /// </summary>
-    private static string FormatParameters(DbParameterCollection parameters)
+    private string FormatParameters(DbParameterCollection parameters)
     {
         var dict = new Dictionary<string, object>();
         foreach (DbParameter p in parameters)
         {
             dict[p.ParameterName] = p.Value ?? "NULL";
         }
-        return JsonSerializer.Serialize(dict);
+        return _jsonSerializer.Serialize(dict);
     }
 }

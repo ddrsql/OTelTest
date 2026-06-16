@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.DynamicProxy;
@@ -20,21 +21,21 @@ namespace VoloAbp.OTel
     public class OTelActivityInterceptor : AbpInterceptor, ITransientDependency
     {
         private readonly ActivitySource _activitySource;
-        //private readonly IJsonSerializer _jsonSerializer;
+        private readonly IJsonSerializer _jsonSerializer;
         private readonly ILogger<OTelActivityInterceptor> _logger;
         private readonly IConfiguration _configuration;
         private readonly OTelOptions _oTelOptions;
 
         public OTelActivityInterceptor(
             ActivitySource activitySource,
-            //IJsonSerializer jsonSerializer, 
+            IJsonSerializer jsonSerializer, 
             ILogger<OTelActivityInterceptor> logger,
             IConfiguration configuration,
             IOptionsSnapshot<OTelOptions> oTelOptions
             )
         {
             _activitySource = activitySource;
-            //_jsonSerializer = jsonSerializer;
+            _jsonSerializer = jsonSerializer;
             _logger = logger;
             _configuration = configuration;
             _oTelOptions = oTelOptions.Value;
@@ -68,10 +69,21 @@ namespace VoloAbp.OTel
                         var args = new Dictionary<string, object>();
                         for (int i = 0; i < parameters.Length; i++)
                         {
+                            if (invocation.Arguments[i] is CancellationToken)
+                                continue;
                             args[parameters[i].Name] = invocation.Arguments[i];
                         }
                         if (args.Count > 0)
-                            activity.SetTag("arguments", JsonSerializer.Serialize(args));
+                        {
+                            try
+                            {
+                                activity.SetTag("arguments", _jsonSerializer.Serialize(args));
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, ex.Message);
+                            }
+                        }
                     }
                 }
             }

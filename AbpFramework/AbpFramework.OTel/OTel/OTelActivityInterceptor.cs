@@ -79,7 +79,16 @@ namespace AbpFramework.OTel
                                 args[parameters[i].Name] = invocation.GetArgumentValue(i);
                             }
                             if (args.Count > 0)
-                                activity?.SetTag("arguments", JsonConvert.SerializeObject(args));
+                            {
+                                try
+                                {
+                                    activity?.SetTag("arguments", JsonConvert.SerializeObject(args));
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.Error(ex.ToString());
+                                }
+                            }
                         }
                     }
                 }

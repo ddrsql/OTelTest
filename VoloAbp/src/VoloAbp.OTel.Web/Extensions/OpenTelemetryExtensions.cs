@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -10,7 +11,9 @@ using OpenTelemetry.Trace;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
+using VoloAbp.OTel;
 
 namespace Microsoft.AspNetCore.Extensions;
 
@@ -74,6 +77,21 @@ public static class OpenTelemetryExtensions
                 .AddRedisInstrumentation(options => { options.SetVerboseDatabaseStatements = true; })
                 .AddAspNetCoreInstrumentation(options =>
                 {
+                    options.Filter = (httpContext) =>
+                    {
+                        var path = httpContext.Request.Path.Value;
+                        if (string.IsNullOrEmpty(path)) return true;
+
+                        // 加载忽略路径配置
+                        var currentOptions = httpContext.RequestServices
+                            .GetRequiredService<IOptionsMonitor<OTelOptions>>().CurrentValue;
+                        if (currentOptions.IgnorePaths?.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)) == true)
+                        {
+                            return false;
+                        }
+
+                        return true;
+                    };
                     options.EnrichWithHttpResponse = (activity, response) =>
                     {
                         // 安全头列表
