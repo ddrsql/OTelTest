@@ -30,5 +30,10 @@ namespace VoloAbp.OTel
         /// 是否记录方法参数到 Span Tag
         /// </summary>
         public bool RecordMethodParam { get; set; }
+
+        /// <summary>
+        /// 忽略path
+        /// </summary>
+        public List<string> IgnorePaths { get; set; }
     }
 }
