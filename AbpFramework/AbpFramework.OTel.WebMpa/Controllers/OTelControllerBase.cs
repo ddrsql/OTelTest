@@ -8,7 +8,7 @@ namespace AbpFramework.OTel.WebMpa.Controllers
     /// <summary>
     /// Derive all Controllers from this class.
     /// </summary>
-    public abstract class OTelControllerBase : AbpController
+    public abstract class OTelControllerBase : AbpController, IOTelActivityEnabled
     {
         protected OTelControllerBase()
         {
