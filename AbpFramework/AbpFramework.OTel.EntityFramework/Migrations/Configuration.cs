@@ -1,5 +1,6 @@
 ﻿using Abp.MultiTenancy;
 using Abp.Zero.EntityFramework;
+using AbpFramework.OTel.EntityFramework;
 using AbpFramework.OTel.Migrations.SeedData;
 using EntityFramework.DynamicFilters;
 using MySql.Data.EntityFramework;
@@ -7,7 +8,7 @@ using System.Data.Entity.Migrations;
 
 namespace AbpFramework.OTel.Migrations
 {
-    public sealed class Configuration : DbMigrationsConfiguration<OTel.EntityFramework.OTelDbContext>, IMultiTenantSeed
+    public sealed class Configuration : DbMigrationsConfiguration<OTelDbContext>, IMultiTenantSeed
     {
         public AbpTenantBase Tenant { get; set; }
 
@@ -19,7 +20,7 @@ namespace AbpFramework.OTel.Migrations
             //SetSqlGenerator("MySql.Data.MySqlClient", new MySqlMigrationSqlGenerator());
         }
 
-        protected override void Seed(OTel.EntityFramework.OTelDbContext context)
+        protected override void Seed(OTelDbContext context)
         {
             context.DisableAllFilters();
 
