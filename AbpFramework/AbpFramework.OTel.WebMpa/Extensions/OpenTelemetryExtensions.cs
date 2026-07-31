@@ -1,4 +1,5 @@
-﻿using AbpFramework.OTel.Migrations;
+﻿using Abp.Extensions;
+using AbpFramework.OTel.Migrations;
 using log4net;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 
 namespace AbpFramework.OTel.WebMpa.Extensions
@@ -31,6 +33,13 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                     new KeyValuePair<string, object>("host.name", Environment.MachineName)
                 });
 
+            // 忽略追踪路径
+            var ignorePaths = new List<string>();
+            var oTelIgnorePaths = ConfigurationManager.AppSettings["OTel_IgnorePaths"];
+            if (!oTelIgnorePaths.IsNullOrWhiteSpace())
+            {
+                ignorePaths = oTelIgnorePaths.Split(",").ToList();
+            }
             var otlpEndpoint = new Uri(ConfigurationManager.AppSettings["OTel_Endpoint"]);
             var oTelRatioSampler = 1.0;
             double.TryParse(ConfigurationManager.AppSettings["OTel_RatioSampler"], out oTelRatioSampler);
@@ -40,6 +49,19 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                 .AddSource(OTelModule.AspNetSourceName)
                 .AddAspNetInstrumentation(options =>
                 {
+                    options.Filter = httpContext =>
+                    {
+                        var path = httpContext?.Request?.Url?.AbsolutePath;
+                        if (string.IsNullOrEmpty(path)) return true;
+
+                        if (ignorePaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            return false; //  不记录 Trace
+                        }
+
+                        return true;
+                    };
+
                     options.EnrichWithHttpRequest = (activity, rawObject) =>
                     {
                         if (rawObject is HttpRequestBase request)
@@ -57,6 +79,18 @@ namespace AbpFramework.OTel.WebMpa.Extensions
                             var httpMethod = activity.GetTagItem("http.request.method");
                             var urlPath = activity.GetTagItem("url.path");
                             activity.DisplayName = httpMethod + " " + urlPath;
+                            // 记录当前操作账号
+                            var user = HttpContext.Current?.User;
+                            if (user?.Identity?.IsAuthenticated == true)
+                            {
+                                activity.SetTag("user.name", user.Identity.Name);
+                                var userClaims = user as ClaimsPrincipal;
+                                var userId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                                if (!string.IsNullOrEmpty(userId))
+                                {
+                                    activity.SetTag("user.id", userId);
+                                }
+                            }
                         }
                     };
                 })
